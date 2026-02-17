@@ -38,11 +38,11 @@
     Date:   April 27, 2022
 #>
 Param (
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'macos', 'ios', 'android', 'netstandard')]
     [Alias("mt")]
     [string[]]$MultiTargets = @('uwp', 'wasm', 'wasdk'),
 
-    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('wasm', 'uwp', 'wasdk', 'macos', 'ios', 'android', 'netstandard')]
     [string[]]$ExcludeMultiTargets = @(), # default settings
 
     [Alias("c")]
@@ -59,7 +59,7 @@ Param (
 )
 
 if ($MultiTargets.Contains('all')) {
-    $MultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')
+    $MultiTargets = @('wasm', 'uwp', 'wasdk', 'macos', 'ios', 'android', 'netstandard')
 }
 
 if ($null -eq $ExcludeMultiTargets)
@@ -67,18 +67,15 @@ if ($null -eq $ExcludeMultiTargets)
     $ExcludeMultiTargets = @()
 }
 
-# Both uwp and wasdk share a targetframework. Both cannot be enabled at once.
-# If both are supplied, remove one based on WinUIMajorVersion.
-if ($MultiTargets.Contains('uwp') -and $MultiTargets.Contains('wasdk'))
+# WinUI 2 only builds native UWP (Uno.UI dropped in Uno 6).
+# WinUI 3 excludes UWP. Both uwp and wasdk share a targetframework and cannot be enabled at once.
+if ($WinUIMajorVersion -eq 2)
 {
-    if ($WinUIMajorVersion -eq 2)
-    {
-        $ExcludeMultiTargets = $ExcludeMultiTargets + 'wasdk'
-    }
-    else
-    {
-        $ExcludeMultiTargets = $ExcludeMultiTargets + 'uwp'
-    }
+    $ExcludeMultiTargets = $ExcludeMultiTargets + 'wasdk' + 'wasm' + 'macos' + 'ios' + 'android'
+}
+else
+{
+    $ExcludeMultiTargets = $ExcludeMultiTargets + 'uwp'
 }
 
 $MultiTargets = $MultiTargets | Where-Object { $_ -notin $ExcludeMultiTargets }
