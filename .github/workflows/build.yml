@@ -145,6 +145,9 @@ jobs:
           # WinUI 2 not supported on wasdk
           - winui: 2
             multitarget: wasdk
+          # WinUI 2 not supported on wasm (Uno 6.x dropped Uno.UI)
+          - winui: 2
+            multitarget: wasm
           # WinUI 3 not supported on uwp
           - winui: 3
             multitarget: uwp
