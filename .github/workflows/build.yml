@@ -238,12 +238,12 @@ jobs:
       - name: Build Uno head (browserwasm)
         if: ${{ matrix.multitarget == 'wasm' }}
         working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
-        run: dotnet build ${{ env.TEST_PROJECT_NAME }}.sln -f net9.0-browserwasm -p:Configuration=Release
+        run: dotnet build heads/Uno/${{ env.TEST_PROJECT_NAME }}.Uno.csproj -f net9.0-browserwasm -p:Configuration=Release
 
       - name: Build Uno head (desktop)
         if: ${{ matrix.multitarget == 'wasm' }}
         working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
-        run: dotnet build ${{ env.TEST_PROJECT_NAME }}.sln -f net9.0-desktop -p:Configuration=Release
+        run: dotnet build heads/Uno/${{ env.TEST_PROJECT_NAME }}.Uno.csproj -f net9.0-desktop -p:Configuration=Release
 
       # Run tests
       - name: Setup VSTest Path
@@ -306,6 +306,9 @@ jobs:
           mkdir ./.config
           copy ./tooling/.config/dotnet-tools.json ./.config/dotnet-tools.json
           mkdir ./components
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
 
       # Restore Tools from Manifest list in the Repository
       - name: Restore dotnet tools

@@ -19,18 +19,20 @@
     <IsAllExperimentHead>true</IsAllExperimentHead>
     <DependencyVariant>WinUI</DependencyVariant>
 
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultUnoItems>false</EnableDefaultUnoItems>
     <DefineConstants>$(DefineConstants);WINUI3</DefineConstants>
   </PropertyGroup>
 
-  <!-- Required for shared app code global usings and platform constants -->
   <Import Project="$(ToolingDirectory)\MultiTarget\DefinedConstants.props" />
   <Import Project="$(ToolingDirectory)\MultiTarget\GlobalUsings.props" />
 
   <!-- Auto-generated project references -->
   <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Samples.props" />
   <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Source.props" />
+
+  <!-- Force component project references to resolve to net9.0 (not windows-specific) -->
+  <ItemGroup>
+    <ProjectReference Update="$(RepositoryDirectory)components\**\*.csproj" SetTargetFramework="TargetFramework=net9.0" />
+  </ItemGroup>
 
   <!-- Shared app code -->
   <Import Project="$(ToolingDirectory)\CommunityToolkit.App.Shared\CommunityToolkit.App.Shared.projitems" Label="Shared" />
@@ -63,7 +65,6 @@
   <!-- Uno app dependencies -->
   <ItemGroup>
     <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.Interactivity.WinUI" Version="3.0.3" />
-    <PackageReference Include="Uno.WinUI.Lottie" Version="6.4.242" />
   </ItemGroup>
 
   <!-- Sample doc content inclusion -->
