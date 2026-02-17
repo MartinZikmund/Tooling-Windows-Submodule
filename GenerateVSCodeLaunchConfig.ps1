@@ -20,12 +20,12 @@ function CreateVsCodeLaunchConfigJson {
       `"/p:UnoSourceGeneratorUseGenerationHost=true`",
       `"/p:UnoSourceGeneratorUseGenerationController=false`",
       `"/p:UnoRemoteControlPort=443`",
-      `"--project=`$`{workspaceFolder`}/components/$projectName/heads/Wasm/$projectName.Wasm.csproj`"
+      `"--project=`$`{workspaceFolder`}/components/$projectName/heads/Uno/$projectName.Uno.csproj`"
     ],
     `"presentation`": {
       `"group`": `"2`"
     },
-    `"cwd`": `"`$`{workspaceFolder`}/components/$projectName/heads/Wasm`"
+    `"cwd`": `"`$`{workspaceFolder`}/components/$projectName/heads/Uno`"
   }";
 }
 

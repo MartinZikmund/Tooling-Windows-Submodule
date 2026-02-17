@@ -54,8 +54,10 @@ Param (
     [string[]]$ExcludeComponents,
 
     [switch]$UseDiagnostics = $false,
-    
-    [bool]$Launch = $true
+
+    [bool]$Launch = $true,
+
+    [switch]$IncludeUnoSdkHead = $false
 )
 
 if ($MultiTargets.Contains('all')) {
@@ -147,11 +149,11 @@ foreach ($componentName in $Components) {
 
 # Deployable sample gallery heads
 # Only include heads for requested MultiTargets if components were included that use them.
-# ===
-# TODO: this handles separate project heads, but won't directly handle the unified Skia head from Uno.
-# Once we have that, just do a transform on the csproj filename inside this loop to decide the same csproj for those separate MultiTargets.
-# ===
 foreach ($multitarget in $allUsedMultiTargetPrefs) {
+    if ($multitarget -eq 'wasm') {
+        continue
+    }
+
     # capitalize first letter, avoid case sensitivity issues on linux
     $csprojFileNamePartForMultiTarget = $multitarget.substring(0,1).ToUpper() + $multitarget.Substring(1).ToLower()
 
@@ -162,6 +164,15 @@ foreach ($multitarget in $allUsedMultiTargetPrefs) {
     }
     else {
         Write-Warning "No project head could be found at $path for MultiTarget $multitarget. Skipping."
+    }
+}
+
+if ($IncludeUnoSdkHead) {
+    $unoHeadPath = "./tooling/ProjectHeads/AllComponents/Uno/CommunityToolkit.App.Uno.csproj"
+    if (Test-Path $unoHeadPath) {
+        [void]$projects.Add($unoHeadPath)
+    } else {
+        Write-Warning "Uno.Sdk head project not found at $unoHeadPath."
     }
 }
 

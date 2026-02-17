@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <CommonUnoPackageVersion>6.4.229</CommonUnoPackageVersion>
+        <CommonUnoPackageVersion>6.4.242</CommonUnoPackageVersion>
     </PropertyGroup>
 
     <!-- All Uno-based project heads and MultiTarget-enabled library projects need to reference this file, while native (UWP/WinAppSdk) heads don't. -->

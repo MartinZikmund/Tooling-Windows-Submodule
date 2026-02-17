@@ -49,7 +49,9 @@ Param (
     [string]$componentPath,
 
     [Parameter(HelpMessage = "Add extra diagnostic output to slngen generator.")]
-    [switch]$UseDiagnostics = $false
+    [switch]$UseDiagnostics = $false,
+
+    [switch]$IncludeUnoSdkHead = $false
 )
 
 if ($null -ne $Env:Path -and $Env:Path.ToLower().Contains("msbuild") -eq $false) {
@@ -179,9 +181,11 @@ Write-Output "Generating solution for $componentName in $generatedSolutionFilePa
 
 # All heads are included by default since they reside in the same folder as the component.
 # Remove any heads that are not required for the solution.
-# TODO: this handles separate project heads, but won't directly handle the unified Skia head from Uno.
-# Once we have that, just do a transform on the csproj filename inside this loop to decide the same csproj for those separate MultiTargets.
 foreach ($multitarget in $MultiTargets) {
+    if ($multitarget -eq 'wasm') {
+        continue
+    }
+
     # capitalize first letter, avoid case sensitivity issues on linux
     $csprojFileNamePartForMultiTarget = $multitarget.substring(0,1).ToUpper() + $multitarget.Substring(1).ToLower()
 
@@ -196,6 +200,17 @@ foreach ($multitarget in $MultiTargets) {
     }
     else {
         Write-Warning "No project head could be found at $path for MultiTarget $multitarget. Skipping."
+    }
+}
+
+if ($IncludeUnoSdkHead) {
+    $unoHeadPath = "$outputHeadsDir\Uno\*Uno.csproj"
+    if (Test-Path $unoHeadPath) {
+        foreach ($foundItem in Get-ChildItem $unoHeadPath) {
+            $projects = $projects + $foundItem.FullName
+        }
+    } else {
+        Write-Warning "Uno.Sdk head project not found at $unoHeadPath."
     }
 }
 

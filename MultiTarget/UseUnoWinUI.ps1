@@ -25,7 +25,6 @@ function ApplyWinUISwap([string] $filePath) {
 
 Write-Output "Switching Uno to WinUI $winUIMajorVersion";
 
-ApplyWinUISwap $PSScriptRoot/../ProjectHeads/App.Head.Uno.props
 ApplyWinUISwap $PSScriptRoot/PackageReferences/Uno.props
 ApplyWinUISwap $PSScriptRoot/WinUI.TargetVersion.props
 
