@@ -32,11 +32,11 @@
     Date:   6/6/2025
 #>
 Param (
-    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('wasm', 'uwp', 'wasdk', 'macos', 'ios', 'android', 'netstandard')]
     [Alias("smt")]
     [string[]]$SupportedMultiTargets,
 
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'macos', 'ios', 'android', 'netstandard')]
     [Alias("rmt")]
     [Parameter(Mandatory=$true)]
     [string[]]$RequestedMultiTargets,
@@ -51,17 +51,17 @@ Param (
 )
 
 if ($RequestedMultiTargets -eq 'all') {
-    $RequestedMultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')
+    $RequestedMultiTargets = @('wasm', 'uwp', 'wasdk', 'macos', 'ios', 'android', 'netstandard')
 }
 
 # List of WinUI-0 (non-WinUI) compatible multitargets
 $WinUI0MultiTargets = @('netstandard')
 
-# List of WinUI-2 compatible multitargets
-$WinUI2MultiTargets = @('uwp', 'wasm', 'wpf', 'linuxgtk', 'macos', 'ios', 'android')
+# List of WinUI-2 compatible multitargets (native UWP only, Uno.UI dropped)
+$WinUI2MultiTargets = @('uwp')
 
 # List of WinUI-3 compatible multitargets
-$WinUI3MultiTargets = @('wasdk', 'wasm', 'wpf', 'linuxgtk', 'macos', 'ios', 'android')
+$WinUI3MultiTargets = @('wasdk', 'wasm', 'macos', 'ios', 'android')
 
 # If WinUI 0 is requested, the component must not support WinUI 2 or WinUI 3 to be built.
 # If WinUI 2 or 3 is requested, the component must have a target that supports WinUI 2 or 3 to be built.
