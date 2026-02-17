@@ -1,0 +1,85 @@
+<Project Sdk="Uno.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net9.0-desktop;net9.0-browserwasm;net9.0-android;net9.0-ios</TargetFrameworks>
+
+    <UnoFeatures>
+      SkiaRenderer;
+    </UnoFeatures>
+
+    <IsPackable>false</IsPackable>
+
+    <!-- Platform flags for project reference conditions -->
+    <IsDeployableHead>true</IsDeployableHead>
+    <IsUno>true</IsUno>
+    <IsWasm>true</IsWasm>
+    <HasWinUI>true</HasWinUI>
+    <WinUIMajorVersion>3</WinUIMajorVersion>
+    <IsSingleExperimentHead>true</IsSingleExperimentHead>
+    <DependencyVariant>WinUI</DependencyVariant>
+
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultUnoItems>false</EnableDefaultUnoItems>
+    <DefineConstants>$(DefineConstants);WINUI3</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Direct project references for single component -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\*.csproj" />
+    <ProjectReference Include="..\..\samples\*.csproj" />
+  </ItemGroup>
+
+  <!-- Shared app code -->
+  <Import Project="$(ToolingDirectory)\CommunityToolkit.App.Shared\CommunityToolkit.App.Shared.projitems" Label="Shared" />
+  <Import Project="$(ToolingDirectory)\ProjectHeads\Targets\AddMultiTargetCompatibleSampleDocs.targets" />
+
+  <!-- Head dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Markdig" Version="0.38.0" />
+  </ItemGroup>
+
+  <!-- Source generators -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(ToolingDirectory)\CommunityToolkit.Tooling.SampleGen\CommunityToolkit.Tooling.SampleGen.csproj"
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <!-- Gallery dependencies -->
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Triggers" Version="8.2.250402" />
+  </ItemGroup>
+
+  <!-- Uno app dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.Interactivity.WinUI" Version="3.0.3" />
+    <PackageReference Include="Uno.WinUI.Lottie" Version="6.4.242" />
+  </ItemGroup>
+
+  <!-- Sample doc content inclusion (single component) -->
+  <ItemGroup>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\samples\**\*.md"
+             Exclude="$(MSBuildProjectDirectory)\..\..\samples\obj\**\*.md;$(MSBuildProjectDirectory)\..\..\samples\bin\**\*.md"
+             Link="SourceAssets/%(RecursiveDir)%(FileName)%(Extension)" />
+    <Content Include="$(MSBuildProjectDirectory)\..\..\samples\**\*.xaml"
+             Exclude="$(MSBuildProjectDirectory)\..\..\samples\obj\**\*.xaml;$(MSBuildProjectDirectory)\..\..\samples\bin\**\*.xaml"
+             Link="SourceAssets/%(RecursiveDir)%(FileName)%(Extension)" />
+    <Content Include="$(MSBuildProjectDirectory)\..\..\samples\**\*.cs"
+             Exclude="$(MSBuildProjectDirectory)\..\..\samples\obj\**\*.cs;$(MSBuildProjectDirectory)\..\..\samples\bin\**\*.cs">
+      <Link>SourceAssets/%(RecursiveDir)%(FileName)%(Extension).dat</Link>
+    </Content>
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\..\..\samples\*.md" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\..\..\src\**\*.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IL2026;Uno0006</NoWarn>
+  </PropertyGroup>
+</Project>
