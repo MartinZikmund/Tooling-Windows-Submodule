@@ -24,6 +24,10 @@
     <DefineConstants>$(DefineConstants);WINUI3</DefineConstants>
   </PropertyGroup>
 
+  <!-- Required for shared app code global usings and platform constants -->
+  <Import Project="$(ToolingDirectory)\MultiTarget\DefinedConstants.props" />
+  <Import Project="$(ToolingDirectory)\MultiTarget\GlobalUsings.props" />
+
   <!-- Auto-generated project references -->
   <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Samples.props" />
   <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Source.props" />
