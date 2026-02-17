@@ -111,6 +111,9 @@ jobs:
         with:
           global-json-file: tooling/global.json
 
+      - name: Install .NET workloads
+        run: dotnet workload install wasm-tools
+
       - name: .NET Info (if diagnostics)
         if: ${{ env.ENABLE_DIAGNOSTICS == 'true' }}
         run: dotnet --info
@@ -181,6 +184,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: tooling/global.json
+
+      - name: Install .NET workloads
+        if: ${{ matrix.multitarget == 'wasm' }}
+        run: dotnet workload install wasm-tools
 
       - name: .NET Info (if diagnostics)
         if: ${{ env.ENABLE_DIAGNOSTICS == 'true' }}
@@ -265,7 +272,7 @@ jobs:
           path: ./**/*.*log
 
   uno-linux:
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       HEADS_DIRECTORY: tooling/ProjectHeads
       PROJECT_DIRECTORY: tooling/ProjectTemplate
@@ -284,7 +291,7 @@ jobs:
           global-json-file: tooling/global.json
 
       - name: Install .NET workloads
-        run: dotnet workload install android ios maui
+        run: dotnet workload install android ios maui wasm-tools
 
       - name: .NET Info (if diagnostics)
         if: ${{ env.ENABLE_DIAGNOSTICS == 'true' }}
