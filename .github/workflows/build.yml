@@ -265,7 +265,7 @@ jobs:
           path: ./**/*.*log
 
   uno-linux:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       HEADS_DIRECTORY: tooling/ProjectHeads
       PROJECT_DIRECTORY: tooling/ProjectTemplate
@@ -282,6 +282,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: tooling/global.json
+
+      - name: Install .NET workloads
+        run: dotnet workload install android ios maui
 
       - name: .NET Info (if diagnostics)
         if: ${{ env.ENABLE_DIAGNOSTICS == 'true' }}
