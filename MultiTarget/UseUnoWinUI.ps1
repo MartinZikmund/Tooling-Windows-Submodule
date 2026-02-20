@@ -11,12 +11,14 @@ function ApplyWinUISwap([string] $filePath) {
         $fileContents = $fileContents -replace '<WinUIMajorVersion>2</WinUIMajorVersion>', '<WinUIMajorVersion>3</WinUIMajorVersion>';
         $fileContents = $fileContents -replace '<PackageIdVariant>Uwp</PackageIdVariant>', '<PackageIdVariant>WinUI</PackageIdVariant>';
         $fileContents = $fileContents -replace '<DependencyVariant>Uwp</DependencyVariant>', '<DependencyVariant>WinUI</DependencyVariant>';
+        $fileContents = $fileContents -replace 'Uno.UI', 'Uno.WinUI';
     }
 
     if ($winUIMajorVersion -eq "2") {
         $fileContents = $fileContents -replace '<WinUIMajorVersion>3</WinUIMajorVersion>', '<WinUIMajorVersion>2</WinUIMajorVersion>';
         $fileContents = $fileContents -replace '<PackageIdVariant>WinUI</PackageIdVariant>', '<PackageIdVariant>Uwp</PackageIdVariant>';
         $fileContents = $fileContents -replace '<DependencyVariant>WinUI</DependencyVariant>', '<DependencyVariant>Uwp</DependencyVariant>';
+        $fileContents = $fileContents -replace 'Uno.WinUI', 'Uno.UI';
     }
 
     Set-Content -Force -Path $filePath -Value $fileContents;
