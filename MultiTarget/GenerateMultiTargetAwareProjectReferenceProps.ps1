@@ -15,9 +15,9 @@ Param (
     [string]$projectRootPlaceholder = "[ProjectRoot]",
 
     [Parameter(HelpMessage = "Only projects that support these targets will have references generated for use by deployable heads.")]
-    [ValidateSet("uwp", "wasdk", "wasm", "macos", "ios", "android", "netstandard")]
+    [ValidateSet("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard")]
     [Alias("mt")]
-    [string[]] $MultiTargets = @("uwp", "wasdk", "wasm", "macos", "ios", "android", "netstandard")
+    [string[]] $MultiTargets = @("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard")
 )
 
 if ($projectPath.EndsWith(".projitems")) {
@@ -74,7 +74,7 @@ function ShouldMultiTargetMsBuildValue([string] $target) {
     return $(ShouldMultiTarget $target).ToString().ToLower()
 }
 
-$targeted = @("uwp", "wasdk", "wasm", "macos", "ios", "android", "netstandard").Where({ ShouldMultiTarget $_ })
+$targeted = @("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard").Where({ ShouldMultiTarget $_ })
 
 if ($targeted.Count -gt 0) {
     Write-Host "Generating project references for $([System.IO.Path]::GetFileNameWithoutExtension($projectFileName)): $($targeted -Join ', ')"
@@ -83,6 +83,8 @@ if ($targeted.Count -gt 0) {
 $templateContents = $templateContents -replace [regex]::escape("[CanTargetWasm]"), "'$(ShouldMultiTargetMsBuildValue "wasm")'";
 $templateContents = $templateContents -replace [regex]::escape("[CanTargetUwp]"), "'$(ShouldMultiTargetMsBuildValue "uwp")'";
 $templateContents = $templateContents -replace [regex]::escape("[CanTargetWasdk]"), "'$(ShouldMultiTargetMsBuildValue "wasdk")'";
+$templateContents = $templateContents -replace [regex]::escape("[CanTargetWpf]"), "'$(ShouldMultiTargetMsBuildValue "wpf")'";
+$templateContents = $templateContents -replace [regex]::escape("[CanTargetLinuxGtk]"), "'$(ShouldMultiTargetMsBuildValue "linuxgtk")'";
 $templateContents = $templateContents -replace [regex]::escape("[CanTargetMacOS]"), "'$(ShouldMultiTargetMsBuildValue "macos")'";
 $templateContents = $templateContents -replace [regex]::escape("[CanTargetiOS]"), "'$(ShouldMultiTargetMsBuildValue "ios")'";
 $templateContents = $templateContents -replace [regex]::escape("[CanTargetDroid]"), "'$(ShouldMultiTargetMsBuildValue "android")'";
