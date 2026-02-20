@@ -10,11 +10,11 @@
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('wasdk')) == 'true' AND $(AvailableMultiTargets.Contains('wasdk')) == 'true'">$(TargetFrameworks);$(WinAppSdkTargetFrameworks)</TargetFrameworks>
 
     <!--
-      TargetFrameworks for WasmLibTargetFrameworks use DotnetCommonTargetFramework.
+      TargetFrameworks for WasmLibTargetFrameworks, WpfLibTargetFrameworks, and LinuxLibTargetFrameworks all use the same value.
       Duplicate values can't be removed during the evaluation phase without breaking things, so we use a single value for all that need it.
     -->
-    <IsNetCommonMultiTargetEnabled Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true'">true</IsNetCommonMultiTargetEnabled>
-    <IsNetCommonMultiTargetAvailable Condition="$(AvailableMultiTargets.Contains('wasm')) == 'true'">true</IsNetCommonMultiTargetAvailable>
+    <IsNetCommonMultiTargetEnabled Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true' OR $(EnabledMultiTargets.Contains('wpf')) == 'true' OR $(EnabledMultiTargets.Contains('linuxgtk')) == 'true'">true</IsNetCommonMultiTargetEnabled>
+    <IsNetCommonMultiTargetAvailable Condition="$(AvailableMultiTargets.Contains('wasm')) == 'true' OR $(AvailableMultiTargets.Contains('wpf')) == 'true' OR $(AvailableMultiTargets.Contains('linuxgtk')) == 'true'">true</IsNetCommonMultiTargetAvailable>
     <TargetFrameworks Condition="$(IsNetCommonMultiTargetEnabled) == 'true' AND $(IsNetCommonMultiTargetAvailable) == 'true'">$(TargetFrameworks);$(DotnetCommonTargetFramework)</TargetFrameworks>
 
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('macos')) == 'true' AND $(AvailableMultiTargets.Contains('macos')) == 'true'">$(TargetFrameworks);$(MacOSLibTargetFrameworks)</TargetFrameworks>

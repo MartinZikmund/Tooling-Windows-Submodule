@@ -68,7 +68,7 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.9.0-dev.2" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="6.4.229" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(CommonUnoPackageVersion)" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="9.0.10" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.0" />
   </ItemGroup>
