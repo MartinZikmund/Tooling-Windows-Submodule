@@ -10,16 +10,16 @@
     </PropertyGroup>
 
     <!-- All Uno-based project heads and MultiTarget-enabled library projects need to reference this file, while native (UWP/WinAppSdk) heads don't. -->
-    <!-- WinUI 3 (Uno.WinUI 6.x) -->
     <ItemGroup Condition="'$(IsUno)' == 'true' AND '$(WinUIMajorVersion)' != '2'">
         <PackageReference Include="Uno.WinUI" Version="$(CommonUnoPackageVersion)" />
-        <PackageReference Include="Uno.Fonts.Fluent" Version="2.6.1" />
     </ItemGroup>
 
-    <!-- WinUI 2 (Uno.UI 5.x) -->
     <ItemGroup Condition="'$(IsUno)' == 'true' AND '$(WinUIMajorVersion)' == '2'">
         <PackageReference Include="Uno.UI" Version="$(CommonUnoPackageVersion)" />
-        <PackageReference Include="Uno.Fonts.Fluent" Version="2.4.5" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsUno)' == 'true'">
+        <PackageReference Include="Uno.Fonts.Fluent" Version="2.6.1" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(IsUno)' == 'true'">
@@ -36,15 +36,13 @@
         <PackageReference Include="Uno.WinUI.DevServer" Version="$(CommonUnoPackageVersion)" Condition="'$(Configuration)'=='Debug'" />
     </ItemGroup>
 
-    <!-- WinUI 2: Skia desktop heads -->
-    <ItemGroup Condition="'$(IsGtkHead)' == 'true'">
-        <PackageReference Include="Uno.UI.Skia.Gtk" Version="$(CommonUnoPackageVersion)" Condition="'$(WinUIMajorVersion)' == '2'" />
-        <PackageReference Include="Uno.WinUI.Skia.Gtk" Version="$(CommonUnoPackageVersion)" Condition="'$(WinUIMajorVersion)' != '2'" />
+    <!-- Skia desktop heads (WinUI 2 only — Uno 6 dropped WPF/GTK) -->
+    <ItemGroup Condition="'$(IsGtkHead)' == 'true' AND '$(WinUIMajorVersion)' == '2'">
+        <PackageReference Include="Uno.UI.Skia.Gtk" Version="$(CommonUnoPackageVersion)" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(IsWpfHead)' == 'true'">
-        <PackageReference Include="Uno.UI.Skia.Wpf" Version="$(CommonUnoPackageVersion)" Condition="'$(WinUIMajorVersion)' == '2'" />
-        <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="$(CommonUnoPackageVersion)" Condition="'$(WinUIMajorVersion)' != '2'" />
+    <ItemGroup Condition="'$(IsWpfHead)' == 'true' AND '$(WinUIMajorVersion)' == '2'">
+        <PackageReference Include="Uno.UI.Skia.Wpf" Version="$(CommonUnoPackageVersion)" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(IsWpfHead)' == 'true'">
