@@ -61,7 +61,7 @@ $WinUI0MultiTargets = @('netstandard')
 $WinUI2MultiTargets = @('uwp', 'wasm', 'wpf', 'linuxgtk', 'macos', 'ios', 'android')
 
 # List of WinUI-3 compatible multitargets
-$WinUI3MultiTargets = @('wasdk', 'wasm', 'macos', 'ios', 'android')
+$WinUI3MultiTargets = @('wasdk', 'wasm', 'ios', 'android')
 
 # If WinUI 0 is requested, the component must not support WinUI 2 or WinUI 3 to be built.
 # If WinUI 2 or 3 is requested, the component must have a target that supports WinUI 2 or 3 to be built.
