@@ -54,8 +54,10 @@ Param (
     [string[]]$ExcludeComponents,
 
     [switch]$UseDiagnostics = $false,
-    
-    [bool]$Launch = $true
+
+    [bool]$Launch = $true,
+
+    [switch]$IncludeUnoSdkHead = $false
 )
 
 if ($MultiTargets.Contains('all')) {
@@ -155,6 +157,11 @@ foreach ($componentName in $Components) {
 # Once we have that, just do a transform on the csproj filename inside this loop to decide the same csproj for those separate MultiTargets.
 # ===
 foreach ($multitarget in $allUsedMultiTargetPrefs) {
+    # When using Uno.Sdk head, skip the traditional Wasm head (Uno SDK covers wasm for WinUI 3)
+    if ($multitarget -eq 'wasm' -and $IncludeUnoSdkHead) {
+        continue
+    }
+
     # capitalize first letter, avoid case sensitivity issues on linux
     $csprojFileNamePartForMultiTarget = $multitarget.substring(0,1).ToUpper() + $multitarget.Substring(1).ToLower()
 
@@ -165,6 +172,15 @@ foreach ($multitarget in $allUsedMultiTargetPrefs) {
     }
     else {
         Write-Warning "No project head could be found at $path for MultiTarget $multitarget. Skipping."
+    }
+}
+
+if ($IncludeUnoSdkHead) {
+    $unoHeadPath = "./tooling/ProjectHeads/AllComponents/Uno/CommunityToolkit.App.Uno.csproj"
+    if (Test-Path $unoHeadPath) {
+        [void]$projects.Add($unoHeadPath)
+    } else {
+        Write-Warning "Uno.Sdk head project not found at $unoHeadPath."
     }
 }
 
