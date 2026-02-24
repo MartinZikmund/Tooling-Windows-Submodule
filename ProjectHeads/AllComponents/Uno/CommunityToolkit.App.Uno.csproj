@@ -1,0 +1,90 @@
+<Project Sdk="Uno.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net9.0-desktop;net9.0-browserwasm;net9.0-android;net9.0-ios</TargetFrameworks>
+
+    <UnoFeatures>
+      SkiaRenderer;
+    </UnoFeatures>
+
+    <IsPackable>false</IsPackable>
+    <RootNamespace>CommunityToolkit.App.Uno</RootNamespace>
+
+    <!-- Platform flags for Generated/*.props project reference conditions -->
+    <IsDeployableHead>true</IsDeployableHead>
+    <IsUno>true</IsUno>
+    <IsWasm>true</IsWasm>
+    <HasWinUI>true</HasWinUI>
+    <WinUIMajorVersion>3</WinUIMajorVersion>
+    <IsAllExperimentHead>true</IsAllExperimentHead>
+    <DependencyVariant>WinUI</DependencyVariant>
+
+    <DefineConstants>$(DefineConstants);WINUI3</DefineConstants>
+  </PropertyGroup>
+
+  <Import Project="$(ToolingDirectory)\MultiTarget\DefinedConstants.props" />
+  <Import Project="$(ToolingDirectory)\MultiTarget\GlobalUsings.props" />
+
+  <!-- Auto-generated project references -->
+  <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Samples.props" />
+  <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Source.props" />
+
+  <!-- Force component project references to resolve to net9.0 (not windows-specific) -->
+  <ItemGroup>
+    <ProjectReference Update="$(RepositoryDirectory)components\**\*.csproj" SetTargetFramework="TargetFramework=net9.0" />
+  </ItemGroup>
+
+  <!-- Shared app code -->
+  <Import Project="$(ToolingDirectory)\CommunityToolkit.App.Shared\CommunityToolkit.App.Shared.projitems" Label="Shared" />
+  <Import Project="$(ToolingDirectory)\ProjectHeads\Targets\AddMultiTargetCompatibleSampleDocs.targets" />
+
+  <!-- Head dependencies (from App.Head.props) -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Markdig" Version="0.38.0" />
+  </ItemGroup>
+
+  <!-- Source generators -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(ToolingDirectory)\CommunityToolkit.Tooling.SampleGen\CommunityToolkit.Tooling.SampleGen.csproj"
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <!-- Gallery dependencies -->
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
+    <PackageReference Include="CommunityToolkit.WinUI.Triggers" Version="8.2.250402" />
+  </ItemGroup>
+
+  <!-- Uno app dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.Interactivity.WinUI" Version="3.0.3" />
+  </ItemGroup>
+
+  <!-- Sample doc content inclusion -->
+  <ItemGroup>
+    <Content Include="$(RepositoryDirectory)components\**\samples\**\*.md"
+             Exclude="$(RepositoryDirectory)**\**\samples\obj\**\*.md;$(RepositoryDirectory)**\**\samples\bin\**\*.md;$(RepositoryDirectory)**\SourceAssets\**\*.md">
+      <Link>SourceAssets/%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Content>
+    <Content Include="$(RepositoryDirectory)components\**\samples\**\*.xaml"
+             Exclude="$(RepositoryDirectory)**\**\samples\obj\**\*.xaml;$(RepositoryDirectory)**\**\samples\bin\**\*.xaml;$(RepositoryDirectory)**\SourceAssets\**\*.xaml">
+      <Link>SourceAssets/%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Content>
+    <Content Include="$(RepositoryDirectory)components\**\samples\**\*.cs"
+             Exclude="$(RepositoryDirectory)**\**\samples\obj\**\*.cs;$(RepositoryDirectory)**\**\samples\bin\**\*.cs">
+      <Link>SourceAssets/%(RecursiveDir)%(FileName)%(Extension).dat</Link>
+    </Content>
+    <AdditionalFiles Include="$(RepositoryDirectory)components\**\src\**\*.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IL2026;Uno0006</NoWarn>
+  </PropertyGroup>
+</Project>
