@@ -8,6 +8,7 @@
     </UnoFeatures>
 
     <IsPackable>false</IsPackable>
+    <UnoSingleProject>true</UnoSingleProject>
 
     <!-- Platform flags for project reference conditions -->
     <IsDeployableHead>true</IsDeployableHead>
@@ -26,8 +27,8 @@
 
   <!-- Direct project references for single component -->
   <ItemGroup>
-    <ProjectReference Include="..\..\src\*.csproj" SetTargetFramework="TargetFramework=net9.0" />
-    <ProjectReference Include="..\..\samples\*.csproj" SetTargetFramework="TargetFramework=net9.0" />
+    <ProjectReference Include="..\..\src\*.csproj" SetTargetFramework="TargetFramework=net9.0" UndefineProperties="RuntimeIdentifier" />
+    <ProjectReference Include="..\..\samples\*.csproj" SetTargetFramework="TargetFramework=net9.0" UndefineProperties="RuntimeIdentifier" />
   </ItemGroup>
 
   <!-- Shared app code -->

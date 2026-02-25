@@ -8,6 +8,7 @@
     </UnoFeatures>
 
     <IsPackable>false</IsPackable>
+    <UnoSingleProject>true</UnoSingleProject>
     <RootNamespace>CommunityToolkit.App.Uno</RootNamespace>
 
     <!-- Platform flags for Generated/*.props project reference conditions -->
@@ -31,7 +32,7 @@
 
   <!-- Force component project references to resolve to net9.0 (not windows-specific) -->
   <ItemGroup>
-    <ProjectReference Update="$(RepositoryDirectory)components\**\*.csproj" SetTargetFramework="TargetFramework=net9.0" />
+    <ProjectReference Update="$(RepositoryDirectory)components\**\*.csproj" SetTargetFramework="TargetFramework=net9.0" UndefineProperties="RuntimeIdentifier" />
   </ItemGroup>
 
   <!-- Shared app code -->
