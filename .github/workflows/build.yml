@@ -145,7 +145,7 @@ jobs:
       fail-fast: false # prevent one matrix pipeline from being cancelled if one fails, we want them all to run to completion.
       matrix:
         winui: [2, 3]
-        multitarget: ['uwp', 'wasdk', 'wasm']
+        multitarget: ['uwp', 'wasdk', 'wasm', 'unosdk']
         exclude:
           # WinUI 2 not supported on wasdk
           - winui: 2
@@ -153,6 +153,12 @@ jobs:
           # WinUI 3 not supported on uwp
           - winui: 3
             multitarget: uwp
+          # Uno SDK is WinUI 3 only
+          - winui: 2
+            multitarget: unosdk
+          # WinUI 3 wasm is covered by the unosdk entry
+          - winui: 3
+            multitarget: wasm
 
     env:
       HEADS_DIRECTORY: tooling/ProjectHeads
@@ -183,8 +189,8 @@ jobs:
           global-json-file: tooling/global.json
 
       - name: Install .NET workloads
-        if: ${{ matrix.multitarget == 'wasm' }}
-        run: dotnet workload install wasm-tools
+        if: ${{ matrix.multitarget == 'wasm' || matrix.multitarget == 'unosdk' }}
+        run: dotnet workload install wasm-tools ${{ matrix.multitarget == 'unosdk' && 'android ios maui' || '' }}
 
       - name: .NET Info (if diagnostics)
         if: ${{ env.ENABLE_DIAGNOSTICS == 'true' }}
@@ -221,26 +227,21 @@ jobs:
         working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
         run: >-
           ${{ github.workspace }}/${{ env.HEADS_DIRECTORY }}/GenerateSingleSampleHeads.ps1
-          -MultiTargets ${{ matrix.multitarget }}
+          -MultiTargets ${{ matrix.multitarget == 'unosdk' && 'wasm' || matrix.multitarget }}
           -winui ${{ matrix.winui }}
           -componentPath "${{ github.workspace }}/${{ env.TEST_PROJECT_DIRECTORY }}"
-          ${{ matrix.multitarget == 'wasm' && matrix.winui == 3 && ' -IncludeUnoSdkHead' || '' }}
+          ${{ matrix.multitarget == 'unosdk' && ' -IncludeUnoSdkHead' || '' }}
           ${{ env.ENABLE_DIAGNOSTICS == 'true' && ' -UseDiagnostics' || '' }}
 
       - name: MSBuild
-        if: ${{ matrix.multitarget != 'wasm' || matrix.winui == 2 }}
+        if: ${{ matrix.multitarget != 'unosdk' }}
         working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
         run: msbuild.exe ${{ env.TEST_PROJECT_NAME }}.sln /restore /nowarn:MSB4011 -p:Configuration=Release
 
-      - name: Build Uno head (browserwasm)
-        if: ${{ matrix.multitarget == 'wasm' && matrix.winui == 3 }}
+      - name: Build Uno head
+        if: ${{ matrix.multitarget == 'unosdk' }}
         working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
-        run: dotnet build heads/Uno/${{ env.TEST_PROJECT_NAME }}.Uno.csproj -f net9.0-browserwasm -p:Configuration=Release
-
-      - name: Build Uno head (desktop)
-        if: ${{ matrix.multitarget == 'wasm' && matrix.winui == 3 }}
-        working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
-        run: dotnet build heads/Uno/${{ env.TEST_PROJECT_NAME }}.Uno.csproj -f net9.0-desktop -p:Configuration=Release
+        run: dotnet build heads/Uno/${{ env.TEST_PROJECT_NAME }}.Uno.csproj -p:Configuration=Release
 
       # Run tests
       - name: Setup VSTest Path
