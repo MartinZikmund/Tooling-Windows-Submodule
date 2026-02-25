@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
-    <DependencyVariant>WinUI</DependencyVariant>
+    <DependencyVariant Condition="'$(WinUIMajorVersion)' != '2'">WinUI</DependencyVariant>
+    <DependencyVariant Condition="'$(WinUIMajorVersion)' == '2'">Uwp</DependencyVariant>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)\App.Head.props" />
