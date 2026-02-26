@@ -7,7 +7,7 @@ internal class Program
     public static void Main(string[] args)
     {
         var host = UnoPlatformHostBuilder.Create()
-            .App(() => new App())
+            .App(() => new CommunityToolkit.App.Shared.App())
             .UseX11()
             .UseLinuxFrameBuffer()
             .UseMacOS()
