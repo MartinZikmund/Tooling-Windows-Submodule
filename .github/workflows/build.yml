@@ -274,8 +274,8 @@ jobs:
           name: new-experiment-logs-${{ matrix.multitarget }}-winui${{ matrix.winui }}
           path: ./**/*.*log
 
-  uno-linux:
-    runs-on: windows-2022
+  uno-windows:
+    runs-on: ubuntu-latest
     env:
       HEADS_DIRECTORY: tooling/ProjectHeads
       PROJECT_DIRECTORY: tooling/ProjectTemplate
