@@ -6,7 +6,7 @@ public class Program
     public static async Task Main(string[] args)
     {
         var host = UnoPlatformHostBuilder.Create()
-            .App(() => new App())
+            .App(() => new CommunityToolkit.App.Shared.App())
             .UseWebAssembly()
             .Build();
 
