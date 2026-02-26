@@ -88,4 +88,9 @@
   <PropertyGroup>
     <NoWarn>$(NoWarn);IL2026;Uno0006</NoWarn>
   </PropertyGroup>
+
+  <!-- Disable AOT on Android - not needed for test app, avoids issues with source generator assemblies in runtime output -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <RunAOTCompilation>false</RunAOTCompilation>
+  </PropertyGroup>
 </Project>
