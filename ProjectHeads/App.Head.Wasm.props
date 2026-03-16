@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(WasmHeadTargetFramework.Split(';')[0])</TargetFramework>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)\App.Head.Uno.props" />
