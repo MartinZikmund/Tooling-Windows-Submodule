@@ -313,9 +313,6 @@ jobs:
           copy ./tooling/.config/dotnet-tools.json ./.config/dotnet-tools.json
           mkdir ./components
 
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
-
       # Restore Tools from Manifest list in the Repository
       - name: Restore dotnet tools
         working-directory: ./
