@@ -293,10 +293,16 @@ jobs:
         with:
           global-json-file: tooling/global.json
 
-      # iOS/maccatalyst workloads aren't installable on Linux, and Uno.Sdk
-      # auto-filters those TFMs on Linux. Only wasm-tools (browserwasm) and
-      # android are needed for the desktop/wasm heads built here.
+      # iOS/maccatalyst workloads aren't installable on Linux (Uno.Sdk
+      # auto-filters those TFMs there). android + wasm-tools are both
+      # required: even a `-f net9.0-browserwasm` build restores all of the
+      # head's TargetFrameworks, so the net9.0-android TFM's workload is
+      # validated during restore.
+      # Run from ./tooling so global.json scopes the install to the pinned
+      # SDK feature band; otherwise the workloads land on the runner's newer
+      # preinstalled SDK and the 9.0.x build can't see them (NETSDK1147).
       - name: Install .NET workloads
+        working-directory: tooling
         run: dotnet workload install android wasm-tools
 
       - name: .NET Info (if diagnostics)
