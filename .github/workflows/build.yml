@@ -274,7 +274,7 @@ jobs:
           name: new-experiment-logs-${{ matrix.multitarget }}-winui${{ matrix.winui }}
           path: ./**/*.*log
 
-  uno-windows:
+  uno-linux:
     runs-on: ubuntu-latest
     env:
       HEADS_DIRECTORY: tooling/ProjectHeads
@@ -293,8 +293,11 @@ jobs:
         with:
           global-json-file: tooling/global.json
 
+      # iOS/maccatalyst workloads aren't installable on Linux, and Uno.Sdk
+      # auto-filters those TFMs on Linux. Only wasm-tools (browserwasm) and
+      # android are needed for the desktop/wasm heads built here.
       - name: Install .NET workloads
-        run: dotnet workload install android ios maui wasm-tools
+        run: dotnet workload install android wasm-tools
 
       - name: .NET Info (if diagnostics)
         if: ${{ env.ENABLE_DIAGNOSTICS == 'true' }}
