@@ -1,7 +1,22 @@
 <Project Sdk="Uno.Sdk">
+  <!-- Written by UseTargetFrameworks.ps1 at solution-gen time from the requested -MultiTargets -->
+  <Import Project="$(ToolingDirectory)\MultiTarget\EnabledMultiTargets.props" />
+
+  <PropertyGroup>
+    <!-- net9.0-desktop rides the same shared net9.0 component build as wasm/wpf/linuxgtk -->
+    <IsNetCommonMultiTargetEnabled Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true' OR $(EnabledMultiTargets.Contains('wpf')) == 'true' OR $(EnabledMultiTargets.Contains('linuxgtk')) == 'true'">true</IsNetCommonMultiTargetEnabled>
+
+    <!-- Only declare TFMs for the MultiTargets actually requested at solution-gen time -->
+    <!-- Trailing (not leading) semicolons: appending "value;" can never produce an empty/blank
+         entry, whereas "$(TargetFrameworks);value" produces a leading ";" if nothing enabled yet. -->
+    <TargetFrameworks Condition="$(IsNetCommonMultiTargetEnabled) == 'true'">$(TargetFrameworks)net9.0-desktop;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true'">$(TargetFrameworks)net9.0-browserwasm;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('android')) == 'true'">$(TargetFrameworks)net9.0-android;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('ios')) == 'true'">$(TargetFrameworks)net9.0-ios;</TargetFrameworks>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net9.0-desktop;net9.0-browserwasm;net9.0-android;net9.0-ios</TargetFrameworks>
 
     <UnoFeatures>
       SkiaRenderer;
@@ -10,10 +25,12 @@
     <IsPackable>false</IsPackable>
     <UnoSingleProject>true</UnoSingleProject>
 
-    <!-- Platform flags for project reference conditions -->
+    <!-- Platform flags, computed per the head's own $(TargetFramework) rather than hardcoded -->
     <IsDeployableHead>true</IsDeployableHead>
     <IsUno>true</IsUno>
-    <IsWasm>true</IsWasm>
+    <IsWasm Condition="'$(TargetFramework)' == 'net9.0-browserwasm' OR '$(TargetFramework)' == 'net9.0-desktop'">true</IsWasm>
+    <IsDroid Condition="'$(TargetFramework)' == 'net9.0-android'">true</IsDroid>
+    <IsiOS Condition="'$(TargetFramework)' == 'net9.0-ios'">true</IsiOS>
     <HasWinUI>true</HasWinUI>
     <WinUIMajorVersion>3</WinUIMajorVersion>
     <IsSingleExperimentHead>true</IsSingleExperimentHead>
@@ -26,9 +43,14 @@
   <Import Project="$(ToolingDirectory)\MultiTarget\GlobalUsings.props" />
 
   <!-- Direct project references for single component -->
+  <PropertyGroup>
+    <UnoSdkComponentTargetFramework>net9.0</UnoSdkComponentTargetFramework>
+    <UnoSdkComponentTargetFramework Condition="'$(TargetFramework)' == 'net9.0-android'">net9.0-android</UnoSdkComponentTargetFramework>
+    <UnoSdkComponentTargetFramework Condition="'$(TargetFramework)' == 'net9.0-ios'">net9.0-ios</UnoSdkComponentTargetFramework>
+  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\*.csproj" SetTargetFramework="TargetFramework=net9.0" UndefineProperties="RuntimeIdentifier" />
-    <ProjectReference Include="..\..\samples\*.csproj" SetTargetFramework="TargetFramework=net9.0" UndefineProperties="RuntimeIdentifier" />
+    <ProjectReference Include="..\..\src\*.csproj" SetTargetFramework="TargetFramework=$(UnoSdkComponentTargetFramework)" UndefineProperties="RuntimeIdentifier" />
+    <ProjectReference Include="..\..\samples\*.csproj" SetTargetFramework="TargetFramework=$(UnoSdkComponentTargetFramework)" UndefineProperties="RuntimeIdentifier" />
   </ItemGroup>
 
   <!-- Shared app code -->

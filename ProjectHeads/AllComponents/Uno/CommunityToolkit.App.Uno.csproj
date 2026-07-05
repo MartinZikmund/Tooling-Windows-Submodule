@@ -1,7 +1,24 @@
 <Project Sdk="Uno.Sdk">
+  <!-- Written by UseTargetFrameworks.ps1 at solution-gen time from the requested -MultiTargets -->
+  <Import Project="$(ToolingDirectory)\MultiTarget\EnabledMultiTargets.props" />
+
+  <PropertyGroup>
+    <!-- net9.0-desktop rides the same shared net9.0 component build as wasm/wpf/linuxgtk -->
+    <IsNetCommonMultiTargetEnabled Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true' OR $(EnabledMultiTargets.Contains('wpf')) == 'true' OR $(EnabledMultiTargets.Contains('linuxgtk')) == 'true'">true</IsNetCommonMultiTargetEnabled>
+
+    <!-- Only declare TFMs for the MultiTargets actually requested at solution-gen time, so an
+         unrequested platform never ends up with an orphaned deploy option pointing at a component
+         build that was never produced (or with the wrong dependency variant on the Uno WinUI 2/3 side). -->
+    <!-- Trailing (not leading) semicolons: appending "value;" can never produce an empty/blank
+         entry, whereas "$(TargetFrameworks);value" produces a leading ";" if nothing enabled yet. -->
+    <TargetFrameworks Condition="$(IsNetCommonMultiTargetEnabled) == 'true'">$(TargetFrameworks)net9.0-desktop;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true'">$(TargetFrameworks)net9.0-browserwasm;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('android')) == 'true'">$(TargetFrameworks)net9.0-android;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('ios')) == 'true'">$(TargetFrameworks)net9.0-ios;</TargetFrameworks>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net9.0-desktop;net9.0-browserwasm;net9.0-android;net9.0-ios</TargetFrameworks>
 
     <UnoFeatures>
       SkiaRenderer;
@@ -11,10 +28,14 @@
     <UnoSingleProject>true</UnoSingleProject>
     <RootNamespace>CommunityToolkit.App.Uno</RootNamespace>
 
-    <!-- Platform flags for Generated/*.props project reference conditions -->
+    <!-- Platform flags for Generated/*.props project reference conditions. Computed per the head's
+         own $(TargetFramework) (like the Android-AOT check below) rather than hardcoded, so each of
+         the head's 4 TFMs pulls in the component references gated for THAT platform, not always wasm. -->
     <IsDeployableHead>true</IsDeployableHead>
     <IsUno>true</IsUno>
-    <IsWasm>true</IsWasm>
+    <IsWasm Condition="'$(TargetFramework)' == 'net9.0-browserwasm' OR '$(TargetFramework)' == 'net9.0-desktop'">true</IsWasm>
+    <IsDroid Condition="'$(TargetFramework)' == 'net9.0-android'">true</IsDroid>
+    <IsiOS Condition="'$(TargetFramework)' == 'net9.0-ios'">true</IsiOS>
     <HasWinUI>true</HasWinUI>
     <WinUIMajorVersion>3</WinUIMajorVersion>
     <IsAllExperimentHead>true</IsAllExperimentHead>
@@ -30,9 +51,15 @@
   <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Samples.props" />
   <Import Project="$(ToolingDirectory)\MultiTarget\Generated\*.Source.props" />
 
-  <!-- Force component project references to resolve to net9.0 (not windows-specific) -->
+  <!-- Force component project references to resolve to net9.0 (not windows-specific), except
+       android/ios which resolve to their own TFM so platform-specific component code is picked up. -->
+  <PropertyGroup>
+    <UnoSdkComponentTargetFramework>net9.0</UnoSdkComponentTargetFramework>
+    <UnoSdkComponentTargetFramework Condition="'$(TargetFramework)' == 'net9.0-android'">net9.0-android</UnoSdkComponentTargetFramework>
+    <UnoSdkComponentTargetFramework Condition="'$(TargetFramework)' == 'net9.0-ios'">net9.0-ios</UnoSdkComponentTargetFramework>
+  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Update="$(RepositoryDirectory)components\**\*.csproj" SetTargetFramework="TargetFramework=net9.0" UndefineProperties="RuntimeIdentifier" />
+    <ProjectReference Update="$(RepositoryDirectory)components\**\*.csproj" SetTargetFramework="TargetFramework=$(UnoSdkComponentTargetFramework)" UndefineProperties="RuntimeIdentifier" />
   </ItemGroup>
 
   <!-- Shared app code -->
