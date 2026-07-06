@@ -4,7 +4,7 @@ Param (
 
   [Parameter(HelpMessage = "Only projects that support these targets will have references generated for use by deployable heads.")]
   [Alias("mt")]
-  [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+  [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
   [string[]]$MultiTargets = @("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard"),
 
   [Parameter(HelpMessage = "The names of the components to generate references for. Defaults to all components.")]
@@ -13,6 +13,13 @@ Param (
   [Parameter(HelpMessage = "The names of the components to exclude when generating project references.")]
   [string[]]$ExcludeComponents
 )
+
+# 'desktop' auto-selects the wpf + linuxgtk component surface so desktop-capable components get a
+# CanTargetWpf/CanTargetLinuxGtk = true reference baked in for the Uno.Sdk desktop head (which
+# presents as wpf). Without this, requesting -MultiTargets desktop would reference zero components.
+if ($MultiTargets -contains 'desktop') {
+    $MultiTargets += @('wpf', 'linuxgtk')
+}
 
 if ($Components -eq @('all')) {
     $Components = @('**')

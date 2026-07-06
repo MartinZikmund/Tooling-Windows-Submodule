@@ -3,13 +3,11 @@
   <Import Project="$(ToolingDirectory)\MultiTarget\EnabledMultiTargets.props" />
 
   <PropertyGroup>
-    <!-- net9.0-desktop rides the same shared net9.0 component build as wasm/wpf/linuxgtk -->
-    <IsNetCommonMultiTargetEnabled Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true' OR $(EnabledMultiTargets.Contains('wpf')) == 'true' OR $(EnabledMultiTargets.Contains('linuxgtk')) == 'true'">true</IsNetCommonMultiTargetEnabled>
-
-    <!-- Only declare TFMs for the MultiTargets actually requested at solution-gen time -->
+    <!-- Only declare a TFM for the MultiTargets requested at solution-gen time. 'desktop' is a
+         first-class MultiTarget that auto-selects wpf+linuxgtk (see UseTargetFrameworks.ps1). -->
     <!-- Trailing (not leading) semicolons: appending "value;" can never produce an empty/blank
          entry, whereas "$(TargetFrameworks);value" produces a leading ";" if nothing enabled yet. -->
-    <TargetFrameworks Condition="$(IsNetCommonMultiTargetEnabled) == 'true'">$(TargetFrameworks)net9.0-desktop;</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('desktop')) == 'true'">$(TargetFrameworks)net9.0-desktop;</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true'">$(TargetFrameworks)net9.0-browserwasm;</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('android')) == 'true'">$(TargetFrameworks)net9.0-android;</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('ios')) == 'true'">$(TargetFrameworks)net9.0-ios;</TargetFrameworks>
@@ -25,10 +23,12 @@
     <IsPackable>false</IsPackable>
     <UnoSingleProject>true</UnoSingleProject>
 
-    <!-- Platform flags, computed per the head's own $(TargetFramework) rather than hardcoded -->
+    <!-- Platform flags, per the head's own $(TargetFramework). net9.0-desktop presents as wpf so
+         it reuses the existing wpf/linuxgtk component surface (refs, docs, MultiTargetIdentifier). -->
     <IsDeployableHead>true</IsDeployableHead>
     <IsUno>true</IsUno>
-    <IsWasm Condition="'$(TargetFramework)' == 'net9.0-browserwasm' OR '$(TargetFramework)' == 'net9.0-desktop'">true</IsWasm>
+    <IsWasm Condition="'$(TargetFramework)' == 'net9.0-browserwasm'">true</IsWasm>
+    <IsWpf Condition="'$(TargetFramework)' == 'net9.0-desktop'">true</IsWpf>
     <IsDroid Condition="'$(TargetFramework)' == 'net9.0-android'">true</IsDroid>
     <IsiOS Condition="'$(TargetFramework)' == 'net9.0-ios'">true</IsiOS>
     <HasWinUI>true</HasWinUI>

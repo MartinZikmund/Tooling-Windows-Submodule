@@ -17,7 +17,7 @@
     Date:   6/6/2025
 #>
 Param (
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
     [Alias("mt")]
     [Parameter(Mandatory=$true)]
     [string[]]$MultiTargets,

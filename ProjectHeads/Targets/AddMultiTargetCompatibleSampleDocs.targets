@@ -8,6 +8,8 @@
     <MultiTargetIdentifier Condition="'$(IsUwp)' == 'true'">uwp</MultiTargetIdentifier>
     <MultiTargetIdentifier Condition="'$(IsWasm)' == 'true'">wasm</MultiTargetIdentifier>
     <MultiTargetIdentifier Condition="'$(IsWinAppSdk)' == 'true'">wasdk</MultiTargetIdentifier>
+    <MultiTargetIdentifier Condition="'$(IsWpf)' == 'true'">wpf</MultiTargetIdentifier>
+    <MultiTargetIdentifier Condition="'$(IsGtk)' == 'true'">linuxgtk</MultiTargetIdentifier>
     <MultiTargetIdentifier Condition="'$(IsMacOS)' == 'true'">macos</MultiTargetIdentifier>
     <MultiTargetIdentifier Condition="'$(IsiOS)' == 'true'">ios</MultiTargetIdentifier>
     <MultiTargetIdentifier Condition="'$(IsDroid)' == 'true'">android</MultiTargetIdentifier>

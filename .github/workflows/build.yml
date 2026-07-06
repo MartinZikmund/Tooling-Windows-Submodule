@@ -336,12 +336,12 @@ jobs:
       - name: Generate solution
         shell: pwsh
         working-directory: ./
-        run: ./tooling/GenerateAllSolution.ps1 -IncludeUnoSdkHead${{ env.ENABLE_DIAGNOSTICS == 'true' && ' -UseDiagnostics' || '' }} -MultiTargets wasm
+        run: ./tooling/GenerateAllSolution.ps1 -IncludeUnoSdkHead${{ env.ENABLE_DIAGNOSTICS == 'true' && ' -UseDiagnostics' || '' }} -MultiTargets wasm,desktop
 
       - name: dotnet build
         shell: pwsh
         working-directory: ./
-        run: ./tooling/Build-Toolkit-Components.ps1 -Release -MultiTargets wasm ${{ env.ENABLE_DIAGNOSTICS == 'true' && ' -BinlogOutput ./ -EnableBinLogs' || '' }}
+        run: ./tooling/Build-Toolkit-Components.ps1 -Release -MultiTargets wasm,desktop ${{ env.ENABLE_DIAGNOSTICS == 'true' && ' -BinlogOutput ./ -EnableBinLogs' || '' }}
 
       - name: Build Uno head (browserwasm)
         shell: pwsh

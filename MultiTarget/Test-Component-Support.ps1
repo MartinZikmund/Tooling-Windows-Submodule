@@ -32,11 +32,11 @@
     Date:   6/6/2025
 #>
 Param (
-    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
     [Alias("smt")]
     [string[]]$SupportedMultiTargets,
 
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
     [Alias("rmt")]
     [Parameter(Mandatory=$true)]
     [string[]]$RequestedMultiTargets,
@@ -54,14 +54,22 @@ if ($RequestedMultiTargets -eq 'all') {
     $RequestedMultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')
 }
 
+# 'desktop' auto-selects the wpf + linuxgtk component surface (see UseTargetFrameworks.ps1), so a
+# component that declares wpf/linuxgtk counts as supporting a requested 'desktop' build.
+if ($RequestedMultiTargets -contains 'desktop') {
+    $RequestedMultiTargets += @('wpf', 'linuxgtk')
+}
+
 # List of WinUI-0 (non-WinUI) compatible multitargets
 $WinUI0MultiTargets = @('netstandard')
 
 # List of WinUI-2 compatible multitargets
 $WinUI2MultiTargets = @('uwp', 'wasm', 'wpf', 'linuxgtk', 'macos', 'ios', 'android')
 
-# List of WinUI-3 compatible multitargets
-$WinUI3MultiTargets = @('wasdk', 'wasm', 'ios', 'android')
+# List of WinUI-3 compatible multitargets.
+# wpf/linuxgtk are the WinUI-3 desktop component surface, served by the unified Uno.Sdk 'desktop'
+# head. (Uno 6 dropped the old Uno.UI.Skia.Wpf/Gtk *packages*, but the desktop *surface* remains.)
+$WinUI3MultiTargets = @('wasdk', 'wasm', 'ios', 'android', 'wpf', 'linuxgtk')
 
 # If WinUI 0 is requested, the component must not support WinUI 2 or WinUI 3 to be built.
 # If WinUI 2 or 3 is requested, the component must have a target that supports WinUI 2 or 3 to be built.

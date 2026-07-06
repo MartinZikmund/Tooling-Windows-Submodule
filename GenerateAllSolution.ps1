@@ -38,11 +38,11 @@
     Date:   April 27, 2022
 #>
 Param (
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
     [Alias("mt")]
-    [string[]]$MultiTargets = @('uwp', 'wasm', 'wasdk'),
+    [string[]]$MultiTargets = @('uwp', 'wasm', 'wasdk', 'desktop'),
 
-    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')]
+    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
     [string[]]$ExcludeMultiTargets = @(), # default settings
 
     [Alias("c")]

@@ -15,7 +15,7 @@ Param (
     [string]$projectRootPlaceholder = "[ProjectRoot]",
 
     [Parameter(HelpMessage = "Only projects that support these targets will have references generated for use by deployable heads.")]
-    [ValidateSet("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard")]
+    [ValidateSet("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard", "desktop")]
     [Alias("mt")]
     [string[]] $MultiTargets = @("uwp", "wasdk", "wpf", "wasm", "linuxgtk", "macos", "ios", "android", "netstandard")
 )
