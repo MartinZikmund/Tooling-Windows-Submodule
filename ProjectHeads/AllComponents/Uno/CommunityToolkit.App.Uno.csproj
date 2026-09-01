@@ -5,11 +5,14 @@
   <PropertyGroup>
     <!-- Only declare a TFM for the MultiTargets actually requested at solution-gen time, so an
          unrequested platform never ends up with an orphaned deploy option pointing at a component
-         build that was never produced. 'desktop' is a first-class MultiTarget that auto-selects
-         wpf+linuxgtk (see UseTargetFrameworks.ps1) so the shared net9.0 component build exists. -->
+         build that was never produced. -->
+    <!-- win32, linux and macos are all served by Uno 6's single cross-platform Skia desktop TFM,
+         so requesting any of them yields the same net9.0-desktop head. -->
+    <IsDesktopMultiTargetEnabled Condition="$(EnabledMultiTargets.Contains('win32')) == 'true' OR $(EnabledMultiTargets.Contains('linux')) == 'true' OR $(EnabledMultiTargets.Contains('macos')) == 'true'">true</IsDesktopMultiTargetEnabled>
+
     <!-- Trailing (not leading) semicolons: appending "value;" can never produce an empty/blank
          entry, whereas "$(TargetFrameworks);value" produces a leading ";" if nothing enabled yet. -->
-    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('desktop')) == 'true'">$(TargetFrameworks)net9.0-desktop;</TargetFrameworks>
+    <TargetFrameworks Condition="'$(IsDesktopMultiTargetEnabled)' == 'true'">$(TargetFrameworks)net9.0-desktop;</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('wasm')) == 'true'">$(TargetFrameworks)net9.0-browserwasm;</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('android')) == 'true'">$(TargetFrameworks)net9.0-android;</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('ios')) == 'true'">$(TargetFrameworks)net9.0-ios;</TargetFrameworks>
@@ -28,14 +31,13 @@
 
     <!-- Platform flags for Generated/*.props project reference conditions. Computed per the head's
          own $(TargetFramework) (like the Android-AOT check below) rather than hardcoded, so each of
-         the head's TFMs pulls in the component references gated for THAT platform.
-         net9.0-desktop presents as wpf: the Uno.Sdk Skia desktop head reuses the existing wpf/linuxgtk
-         component surface (every desktop-capable component declares both) for reference gating,
-         sample-doc filtering, and MultiTargetIdentifier — no new per-component declaration needed. -->
+         the head's TFMs pulls in the component references gated for THAT platform. IsDesktop covers
+         the win32/linux/macos trio at once, since they share this one build output.
+         (Uno.Sdk defines IsDesktop identically; set here too so the head stays self-describing.) -->
     <IsDeployableHead>true</IsDeployableHead>
     <IsUno>true</IsUno>
     <IsWasm Condition="'$(TargetFramework)' == 'net9.0-browserwasm'">true</IsWasm>
-    <IsWpf Condition="'$(TargetFramework)' == 'net9.0-desktop'">true</IsWpf>
+    <IsDesktop Condition="'$(TargetFramework)' == 'net9.0-desktop'">true</IsDesktop>
     <IsDroid Condition="'$(TargetFramework)' == 'net9.0-android'">true</IsDroid>
     <IsiOS Condition="'$(TargetFramework)' == 'net9.0-ios'">true</IsiOS>
     <HasWinUI>true</HasWinUI>

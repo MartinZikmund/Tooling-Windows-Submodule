@@ -27,7 +27,7 @@
     </PropertyGroup>
 
     <!-- WinUI 2: Uno.UI.RemoteControl for wasm/wpf/gtk -->
-    <ItemGroup Condition="'$(WinUIMajorVersion)' == '2' AND ('$(IsWasm)' == 'true' OR '$(IsWpf)' == 'true' OR '$(IsGtk)' == 'true')">
+    <ItemGroup Condition="'$(WinUIMajorVersion)' == '2' AND ('$(IsWasm)' == 'true' OR '$(IsWpf)' == 'true' OR '$(IsLinux)' == 'true')">
         <PackageReference Include="Uno.UI.RemoteControl" Version="$(CommonUnoPackageVersion)" Condition="'$(Configuration)'=='Debug'" />
     </ItemGroup>
 
@@ -37,7 +37,7 @@
     </ItemGroup>
 
     <!-- Skia desktop heads (WinUI 2 only — Uno 6 dropped WPF/GTK) -->
-    <ItemGroup Condition="'$(IsGtkHead)' == 'true' AND '$(WinUIMajorVersion)' == '2'">
+    <ItemGroup Condition="'$(IsLinuxHead)' == 'true' AND '$(WinUIMajorVersion)' == '2'">
         <PackageReference Include="Uno.UI.Skia.Gtk" Version="$(CommonUnoPackageVersion)" />
     </ItemGroup>
 

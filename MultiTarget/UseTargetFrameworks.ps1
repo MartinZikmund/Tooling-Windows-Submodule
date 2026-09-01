@@ -22,26 +22,19 @@
 #>
 Param (
     [Parameter(HelpMessage = "The target frameworks to enable.")]
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'win32', 'linux', 'macos', 'ios', 'android', 'netstandard')]
     [Alias("mt")]
     [string[]]$MultiTargets = @('uwp', 'wasdk', 'wasm'), # default settings
 
     [Parameter(HelpMessage = "The target frameworks to disable.")]
-    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
+    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'win32', 'linux', 'macos', 'ios', 'android', 'netstandard')]
     [string[]]$ExcludeMultiTargets = @() # default settings
 )
-
-# 'desktop' is a first-class MultiTarget (the unified Uno.Sdk Skia desktop head). It auto-selects
-# wpf + linuxgtk, the shared net9.0 desktop component surface, so the desktop head has components to
-# reference. 'desktop' itself is retained so the head can key its net9.0-desktop TFM off it.
-if ($MultiTargets -contains 'desktop') {
-    $MultiTargets += @('wpf', 'linuxgtk')
-}
 
 $fileContents = Get-Content -Path $PSScriptRoot/EnabledMultiTargets.props
 $newFileContents = $fileContents;
 
-$AllMultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')
+$AllMultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'win32', 'linux', 'macos', 'ios', 'android', 'netstandard')
 
 # Exclude as needed
 foreach ($excluded in $ExcludeMultiTargets) {

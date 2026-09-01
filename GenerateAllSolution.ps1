@@ -38,11 +38,11 @@
     Date:   April 27, 2022
 #>
 Param (
-    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
+    [ValidateSet('all', 'wasm', 'uwp', 'wasdk', 'wpf', 'win32', 'linux', 'macos', 'ios', 'android', 'netstandard')]
     [Alias("mt")]
-    [string[]]$MultiTargets = @('uwp', 'wasm', 'wasdk', 'desktop'),
+    [string[]]$MultiTargets = @('uwp', 'wasm', 'wasdk', 'win32'),
 
-    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard', 'desktop')]
+    [ValidateSet('wasm', 'uwp', 'wasdk', 'wpf', 'win32', 'linux', 'macos', 'ios', 'android', 'netstandard')]
     [string[]]$ExcludeMultiTargets = @(), # default settings
 
     [Alias("c")]
@@ -61,7 +61,7 @@ Param (
 )
 
 if ($MultiTargets.Contains('all')) {
-    $MultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'linuxgtk', 'macos', 'ios', 'android', 'netstandard')
+    $MultiTargets = @('wasm', 'uwp', 'wasdk', 'wpf', 'win32', 'linux', 'macos', 'ios', 'android', 'netstandard')
 }
 
 if ($null -eq $ExcludeMultiTargets)
@@ -152,12 +152,15 @@ foreach ($componentName in $Components) {
 
 # Deployable sample gallery heads
 # Only include heads for requested MultiTargets if components were included that use them.
-# ===
-# TODO: this handles separate project heads, but won't directly handle the unified Skia head from Uno.
-# Once we have that, just do a transform on the csproj filename inside this loop to decide the same csproj for those separate MultiTargets.
-# ===
+# These have no head project of their own - they're served by the unified Uno.Sdk head added below.
+$unoSdkHeadMultiTargets = @('win32', 'linux', 'macos', 'ios', 'android')
+
 foreach ($multitarget in $allUsedMultiTargetPrefs) {
-    # When using Uno.Sdk head, skip the traditional Wasm head (Uno SDK covers wasm for WinUI 3)
+    if ($unoSdkHeadMultiTargets -contains $multitarget) {
+        continue
+    }
+
+    # When using the Uno.Sdk head, skip the traditional Wasm head (Uno.Sdk covers wasm for WinUI 3)
     if ($multitarget -eq 'wasm' -and $IncludeUnoSdkHead) {
         continue
     }

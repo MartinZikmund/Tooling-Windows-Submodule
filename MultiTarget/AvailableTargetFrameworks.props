@@ -24,6 +24,7 @@
         <LinuxLibTargetFrameworks Condition="'$(LinuxLibTargetFrameworks)' == ''">net9.0;</LinuxLibTargetFrameworks>
         <WasmLibTargetFrameworks Condition="'$(WasmLibTargetFrameworks)' == ''">net9.0;</WasmLibTargetFrameworks>
         <WpfLibTargetFrameworks Condition="'$(WpfLibTargetFrameworks)' == ''">net9.0;</WpfLibTargetFrameworks>
+        <Win32LibTargetFrameworks Condition="'$(Win32LibTargetFrameworks)' == ''">net9.0;</Win32LibTargetFrameworks>
 
         <!-- Used for defining TargetFramework under platforms that need it -->
         <DotnetStandardCommonTargetFramework Condition="'$(DotnetStandardCommonTargetFramework)' == ''">netstandard2.0;</DotnetStandardCommonTargetFramework>
