@@ -46,7 +46,7 @@ Uno 6.x (WinUI 3, `Uno.WinUI`) ship different heads.
 | `wpf` | Windows desktop, Skia WPF | `net{x}`, Skia WPF head | n/a — use `win32` |
 | `win32` | Windows desktop, Skia Win32 | n/a — use `wpf` | `net{x}`, `net{x}-desktop` head |
 | `linux` | Linux desktop | `net{x}`, Skia GTK head | `net{x}`, `net{x}-desktop` head |
-| `macos` | macOS | `net{x}-maccatalyst` | `net{x}-maccatalyst`, plus `net{x}` for the `net{x}-desktop` head |
+| `macos` | macOS | `net{x}-maccatalyst` | `net{x}`, `net{x}-desktop` head |
 | `ios` | iOS | `net{x}-ios` | `net{x}-ios` |
 | `android` | Android | `net{x}-android` | `net{x}-android` |
 | `netstandard` | .NET Standard, no WinUI | `netstandard2.0` | `netstandard2.0` |
@@ -55,6 +55,9 @@ Uno 6.x (WinUI 3, `Uno.WinUI`) ship different heads.
 per-OS Skia heads with a single cross-platform `net{x}-desktop` head that picks its backend at
 runtime. They stay separate MultiTargets so a component can declare — and solution generation and
 CI can request — only the desktop platforms that are actually supported.
+
+Mac Catalyst is WinUI 2 only. Uno 7 removes support for it, and on WinUI 3 macOS is reached through
+the Skia desktop head instead, so `net{x}-maccatalyst` is not part of the WinUI 3 package surface.
 
 ## ProjectReference Generation
 
