@@ -23,7 +23,7 @@
       which consumes the shared net9.0 build above. Uno 7 removes Mac Catalyst support entirely, so
       the Catalyst TFM is deliberately not carried into the WinUI 3 package surface.
     -->
-    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('macos')) == 'true' AND $(AvailableMultiTargets.Contains('macos')) == 'true' AND '$(WinUIMajorVersion)' != '3'">$(TargetFrameworks);$(MacOSLibTargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('macos')) == 'true' AND $(AvailableMultiTargets.Contains('macos')) == 'true' AND '$(WinUIMajorVersion)' == '2'">$(TargetFrameworks);$(MacOSLibTargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('ios')) == 'true' AND $(AvailableMultiTargets.Contains('ios')) == 'true'">$(TargetFrameworks);$(iOSLibTargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="$(EnabledMultiTargets.Contains('android')) == 'true' AND $(AvailableMultiTargets.Contains('android')) == 'true'">$(TargetFrameworks);$(AndroidLibTargetFrameworks)</TargetFrameworks>
 

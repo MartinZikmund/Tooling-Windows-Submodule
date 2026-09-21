@@ -6,11 +6,15 @@
         <UnoWinUIPackageVersion>6.4.229</UnoWinUIPackageVersion>
         <!-- Select active version based on WinUIMajorVersion -->
         <CommonUnoPackageVersion Condition="'$(WinUIMajorVersion)' == '2'">$(UnoUIPackageVersion)</CommonUnoPackageVersion>
-        <CommonUnoPackageVersion Condition="'$(WinUIMajorVersion)' != '2'">$(UnoWinUIPackageVersion)</CommonUnoPackageVersion>
+        <CommonUnoPackageVersion Condition="'$(WinUIMajorVersion)' == '3'">$(UnoWinUIPackageVersion)</CommonUnoPackageVersion>
     </PropertyGroup>
 
-    <!-- All Uno-based project heads and MultiTarget-enabled library projects need to reference this file, while native (UWP/WinAppSdk) heads don't. -->
-    <ItemGroup Condition="'$(IsUno)' == 'true' AND '$(WinUIMajorVersion)' != '2'">
+    <!--
+      All Uno-based project heads and MultiTarget-enabled library projects need to reference this file, while native (UWP/WinAppSdk) heads don't.
+      Explicit '== 2'/'== 3' (never '!= 2') because WinUIMajorVersion can also be unset/0 for a netstandard-only MultiTarget component that still
+      picks up IsUno (e.g. via IsWasm), and '!= 2' would wrongly match that case.
+    -->
+    <ItemGroup Condition="'$(IsUno)' == 'true' AND '$(WinUIMajorVersion)' == '3'">
         <PackageReference Include="Uno.WinUI" Version="$(CommonUnoPackageVersion)" />
     </ItemGroup>
 
@@ -32,7 +36,7 @@
     </ItemGroup>
 
     <!-- WinUI 3: Uno.WinUI.DevServer for wasm -->
-    <ItemGroup Condition="'$(WinUIMajorVersion)' != '2' AND '$(IsWasm)' == 'true'">
+    <ItemGroup Condition="'$(WinUIMajorVersion)' == '3' AND '$(IsWasm)' == 'true'">
         <PackageReference Include="Uno.WinUI.DevServer" Version="$(CommonUnoPackageVersion)" Condition="'$(Configuration)'=='Debug'" />
     </ItemGroup>
 
@@ -69,7 +73,7 @@
         <PackageReference Include="Uno.UI.WebAssembly" Version="$(CommonUnoPackageVersion)" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(IsWasmHead)' == 'true' AND '$(WinUIMajorVersion)' != '2'">
+    <ItemGroup Condition="'$(IsWasmHead)' == 'true' AND '$(WinUIMajorVersion)' == '3'">
         <PackageReference Include="Uno.WinUI.WebAssembly" Version="$(CommonUnoPackageVersion)" />
     </ItemGroup>
 </Project>
