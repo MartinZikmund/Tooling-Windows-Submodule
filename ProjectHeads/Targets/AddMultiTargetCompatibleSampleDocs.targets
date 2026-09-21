@@ -16,9 +16,14 @@
     <MultiTargetIdentifier Condition="'$(IsDroid)' == 'true'">android</MultiTargetIdentifier>
     <MultiTargetIdentifier Condition="'$(IsNetstandard)' == 'true'">netstandard</MultiTargetIdentifier>
 
-    <!-- Last wins: the unified Uno 6 desktop head deploys all three desktop MultiTargets at once,
-         so it matches sample docs for any of them. CheckMultiTarget accepts a ';' separated list. -->
-    <MultiTargetIdentifier Condition="'$(IsDesktop)' == 'true'">win32;linux;macos</MultiTargetIdentifier>
+    <!-- Last wins: the unified Uno 6 desktop head build (net9.0-desktop) can back several of
+         win32/linux/macos at once. IsDesktop alone can't tell which were actually requested, so
+         match against $(EnabledMultiTargets) instead of assuming all three. CheckMultiTarget
+         accepts a ';' separated list; trailing (not leading) semicolons per the usual convention. -->
+    <MultiTargetIdentifier Condition="'$(IsDesktop)' == 'true'"></MultiTargetIdentifier>
+    <MultiTargetIdentifier Condition="'$(IsDesktop)' == 'true' AND $(EnabledMultiTargets.Contains('win32')) == 'true'">$(MultiTargetIdentifier)win32;</MultiTargetIdentifier>
+    <MultiTargetIdentifier Condition="'$(IsDesktop)' == 'true' AND $(EnabledMultiTargets.Contains('linux')) == 'true'">$(MultiTargetIdentifier)linux;</MultiTargetIdentifier>
+    <MultiTargetIdentifier Condition="'$(IsDesktop)' == 'true' AND $(EnabledMultiTargets.Contains('macos')) == 'true'">$(MultiTargetIdentifier)macos;</MultiTargetIdentifier>
   </PropertyGroup>
 
   <Target Name="AddMultiTargetCompatibleSampleDocs" Condition="'$(IsAllExperimentHead)' == 'true'" BeforeTargets="BeforeBuild">

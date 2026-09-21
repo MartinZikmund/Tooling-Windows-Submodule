@@ -32,12 +32,17 @@
     <!-- Platform flags for Generated/*.props project reference conditions. Computed per the head's
          own $(TargetFramework) (like the Android-AOT check below) rather than hardcoded, so each of
          the head's TFMs pulls in the component references gated for THAT platform. IsDesktop covers
-         the win32/linux/macos trio at once, since they share this one build output.
+         the win32/linux/macos trio at once, since they share this one build output, but it can't say
+         which of the three was actually requested - IsWin32/IsLinux/IsMacOS are set individually from
+         $(EnabledMultiTargets) for that.
          (Uno.Sdk defines IsDesktop identically; set here too so the head stays self-describing.) -->
     <IsDeployableHead>true</IsDeployableHead>
     <IsUno>true</IsUno>
     <IsWasm Condition="'$(TargetFramework)' == 'net9.0-browserwasm'">true</IsWasm>
     <IsDesktop Condition="'$(TargetFramework)' == 'net9.0-desktop'">true</IsDesktop>
+    <IsWin32 Condition="'$(TargetFramework)' == 'net9.0-desktop' AND $(EnabledMultiTargets.Contains('win32')) == 'true'">true</IsWin32>
+    <IsLinux Condition="'$(TargetFramework)' == 'net9.0-desktop' AND $(EnabledMultiTargets.Contains('linux')) == 'true'">true</IsLinux>
+    <IsMacOS Condition="'$(TargetFramework)' == 'net9.0-desktop' AND $(EnabledMultiTargets.Contains('macos')) == 'true'">true</IsMacOS>
     <IsDroid Condition="'$(TargetFramework)' == 'net9.0-android'">true</IsDroid>
     <IsiOS Condition="'$(TargetFramework)' == 'net9.0-ios'">true</IsiOS>
     <HasWinUI>true</HasWinUI>
@@ -95,9 +100,7 @@
   </ItemGroup>
 
   <!-- Uno app dependencies -->
-  <ItemGroup>
-    <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.Interactivity.WinUI" Version="3.0.3" />
-  </ItemGroup>
+  <Import Project="$(ToolingDirectory)\ProjectHeads\App.Head.Uno.WinUI.Dependencies.props" />
 
   <!-- Sample doc content inclusion -->
   <ItemGroup>
@@ -120,8 +123,5 @@
     <NoWarn>$(NoWarn);IL2026;Uno0006</NoWarn>
   </PropertyGroup>
 
-  <!-- Disable AOT on Android - not needed for test app, avoids issues with source generator assemblies in runtime output -->
-  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <RunAOTCompilation>false</RunAOTCompilation>
-  </PropertyGroup>
+  <Import Project="$(ToolingDirectory)\ProjectHeads\App.Head.Android.props" />
 </Project>
