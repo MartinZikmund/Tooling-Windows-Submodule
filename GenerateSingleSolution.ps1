@@ -49,9 +49,7 @@ Param (
     [string]$componentPath,
 
     [Parameter(HelpMessage = "Add extra diagnostic output to slngen generator.")]
-    [switch]$UseDiagnostics = $false,
-
-    [switch]$IncludeUnoSdkHead = $false
+    [switch]$UseDiagnostics = $false
 )
 
 if ($null -ne $Env:Path -and $Env:Path.ToLower().Contains("msbuild") -eq $false) {
@@ -193,13 +191,19 @@ Write-Output "Generating solution for $componentName in $generatedSolutionFilePa
 # These have no head project of their own - they're served by the unified Uno.Sdk head added below.
 $unoSdkHeadMultiTargets = @('win32', 'linux', 'macos', 'ios', 'android')
 
+# The Uno.Sdk head is implied by the requested MultiTargets, not a separate switch: it's the only
+# head that can serve win32/linux/macos/ios/android, and for wasm it replaces the classic Wasm head
+# once WinUI 3 is requested (WinUI 2 + wasm keeps using the classic head).
+$includeUnoSdkHead = (($MultiTargets | Where-Object { $unoSdkHeadMultiTargets -contains $_ }).Count -gt 0) -or `
+    ($MultiTargets.Contains('wasm') -and $WinUIMajorVersion -eq 3)
+
 foreach ($multitarget in $MultiTargets) {
     if ($unoSdkHeadMultiTargets -contains $multitarget) {
         continue
     }
 
     # When using the Uno.Sdk head, skip the traditional Wasm head (Uno.Sdk covers wasm for WinUI 3)
-    if ($multitarget -eq 'wasm' -and $IncludeUnoSdkHead) {
+    if ($multitarget -eq 'wasm' -and $includeUnoSdkHead) {
         continue
     }
 
@@ -220,7 +224,7 @@ foreach ($multitarget in $MultiTargets) {
     }
 }
 
-if ($IncludeUnoSdkHead) {
+if ($includeUnoSdkHead) {
     $unoHeadPath = "$outputHeadsDir\Uno\*Uno.csproj"
     if (Test-Path $unoHeadPath) {
         foreach ($foundItem in Get-ChildItem $unoHeadPath) {

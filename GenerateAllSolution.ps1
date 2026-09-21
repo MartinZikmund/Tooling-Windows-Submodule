@@ -55,9 +55,7 @@ Param (
 
     [switch]$UseDiagnostics = $false,
 
-    [bool]$Launch = $true,
-
-    [switch]$IncludeUnoSdkHead = $false
+    [bool]$Launch = $true
 )
 
 if ($MultiTargets.Contains('all')) {
@@ -155,13 +153,19 @@ foreach ($componentName in $Components) {
 # These have no head project of their own - they're served by the unified Uno.Sdk head added below.
 $unoSdkHeadMultiTargets = @('win32', 'linux', 'macos', 'ios', 'android')
 
+# The Uno.Sdk head is implied by the requested MultiTargets, not a separate switch: it's the only
+# head that can serve win32/linux/macos/ios/android, and for wasm it replaces the classic Wasm head
+# once WinUI 3 is requested (WinUI 2 + wasm keeps using the classic head).
+$includeUnoSdkHead = (($allUsedMultiTargetPrefs | Where-Object { $unoSdkHeadMultiTargets -contains $_ }).Count -gt 0) -or `
+    ($allUsedMultiTargetPrefs.Contains('wasm') -and $WinUIMajorVersion -eq 3)
+
 foreach ($multitarget in $allUsedMultiTargetPrefs) {
     if ($unoSdkHeadMultiTargets -contains $multitarget) {
         continue
     }
 
     # When using the Uno.Sdk head, skip the traditional Wasm head (Uno.Sdk covers wasm for WinUI 3)
-    if ($multitarget -eq 'wasm' -and $IncludeUnoSdkHead) {
+    if ($multitarget -eq 'wasm' -and $includeUnoSdkHead) {
         continue
     }
 
@@ -178,7 +182,7 @@ foreach ($multitarget in $allUsedMultiTargetPrefs) {
     }
 }
 
-if ($IncludeUnoSdkHead) {
+if ($includeUnoSdkHead) {
     $unoHeadPath = "./tooling/ProjectHeads/AllComponents/Uno/CommunityToolkit.App.Uno.csproj"
     if (Test-Path $unoHeadPath) {
         [void]$projects.Add($unoHeadPath)
