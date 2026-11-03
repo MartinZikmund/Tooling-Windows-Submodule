@@ -15,6 +15,7 @@
         <DefineConstants Condition="'$(IsWpf)' == 'true'">$(DefineConstants);HAS_UNO_SKIA;__SKIA__;WINDOWS_WPF;</DefineConstants>
         <DefineConstants Condition="'$(IsLinux)' == 'true'">$(DefineConstants);HAS_UNO_SKIA;__SKIA__;__GTK__;</DefineConstants>
         <DefineConstants Condition="'$(IsWin32)' == 'true'">$(DefineConstants);HAS_UNO_SKIA;__SKIA__;</DefineConstants>
+        <DefineConstants Condition="'$(IsMacOSDesktopLib)' == 'true'">$(DefineConstants);HAS_UNO_SKIA;__SKIA__;</DefineConstants>
         <!-- The unified Uno Skia desktop head: one build output for Windows, Linux and macOS. -->
         <DefineConstants Condition="'$(IsDesktop)' == 'true'">$(DefineConstants);HAS_UNO_SKIA;__SKIA__;</DefineConstants>
 

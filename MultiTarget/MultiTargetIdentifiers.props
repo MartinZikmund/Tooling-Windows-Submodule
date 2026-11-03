@@ -50,10 +50,12 @@
 
     <IsDroid Condition="'$(IsDroid)' == '' AND $(AndroidLibTargetFrameworks.Contains('$(TargetFramework);')) AND '$(AndroidLibTargetFrameworks)' != '' AND '$(MultiTargetsDroid)' == 'true'">true</IsDroid>
     <IsMacOS Condition="'$(IsMacOS)' == '' AND $(MacOSLibTargetFrameworks.Contains('$(TargetFramework);')) AND '$(MacOSLibTargetFrameworks)' != '' AND '$(MultiTargetsMacOS)' == 'true'">true</IsMacOS>
+    <!-- On WinUI 3 macos is served by the Uno 7 desktop head, which consumes the shared net10.0 library build -->
+    <IsMacOSDesktopLib Condition="'$(IsMacOSDesktopLib)' == '' AND '$(WinUIMajorVersion)' == '3' AND '$(DotnetCommonTargetFramework)' != '' AND $(DotnetCommonTargetFramework.Contains('$(TargetFramework);')) AND '$(MultiTargetsMacOS)' == 'true'">true</IsMacOSDesktopLib>
     <IsiOS Condition="'$(IsiOS)' == '' AND $(iOSLibTargetFrameworks.Contains('$(TargetFramework);')) AND '$(iOSLibTargetFrameworks)' != '' AND '$(MultiTargetsiOS)' == 'true'">true</IsiOS>
     <IsNetstandard Condition="'$(IsNetstandard)' == '' AND $(DotnetStandardCommonTargetFramework.Contains('$(TargetFramework);')) AND '$(MultiTargetsNetstandard)' == 'true'">true</IsNetstandard>
 
-    <IsUno Condition="'$(IsWasm)' == 'true' OR '$(IsWpf)' == 'true' OR '$(IsWin32)' == 'true' OR '$(IsLinux)' == 'true' OR '$(IsDesktop)' == 'true' OR '$(IsDroid)' == 'true' OR '$(IsMacOS)' == 'true' OR '$(IsiOS)' == 'true'">true</IsUno>
+    <IsUno Condition="'$(IsWasm)' == 'true' OR '$(IsWpf)' == 'true' OR '$(IsWin32)' == 'true' OR '$(IsLinux)' == 'true' OR '$(IsDesktop)' == 'true' OR '$(IsDroid)' == 'true' OR '$(IsMacOS)' == 'true' OR '$(IsMacOSDesktopLib)' == 'true' OR '$(IsiOS)' == 'true'">true</IsUno>
 
     <!--
       Provide an opt-out switch for https://github.com/CommunityToolkit/Tooling-Windows-Submodule/issues/185.
