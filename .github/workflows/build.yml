@@ -287,12 +287,17 @@ jobs:
       # (GenerateSingleSolution.ps1 swaps in the Uno.Sdk head instead of the classic Wasm one for
       # WinUI 3 + wasm), so one MSBuild invocation covers the Uno.Sdk head too - msbuild.exe builds
       # it fine, verified locally against dotnet build with identical results.
-      # Built from a drive letter mapped to the workspace: Uno's wasm runtime deploys files under
-      # wwwroot/package_<hash>/ that go past MAX_PATH from the runner's long workspace path
+      # wasm builds from a drive letter mapped to the workspace: Uno's wasm runtime deploys files under
+      # wwwroot/package_<hash>/ that go past MAX_PATH from the runner's long workspace path. Not for the
+      # Windows heads, whose test packages are registered by a service that can't see a subst drive.
       - name: MSBuild
         run: |
-          subst W: "${{ github.workspace }}"
-          Set-Location "W:\${{ env.TEST_PROJECT_DIRECTORY }}"
+          if ('${{ matrix.multitarget }}' -eq 'wasm') {
+            subst W: "${{ github.workspace }}"
+            Set-Location "W:\${{ env.TEST_PROJECT_DIRECTORY }}"
+          } else {
+            Set-Location "${{ github.workspace }}\${{ env.TEST_PROJECT_DIRECTORY }}"
+          }
           msbuild.exe ${{ env.TEST_PROJECT_NAME }}.sln /restore /nowarn:MSB4011 -p:Configuration=Release /m ${{ env.ENABLE_DIAGNOSTICS == 'true' && '/bl' || '' }} /v:${{ env.MSBUILD_VERBOSITY }}
 
       # Run tests
