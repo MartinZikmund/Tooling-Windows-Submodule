@@ -140,6 +140,9 @@ public partial class MarkdownTextBlock : ToolkitMTB
     {
         // Note: TODO: We can't use win:IsTextSelectionEnabled in XAML, for some reason getting a UWP compiler issue...? Maybe confused by inheritance?
         IsTextSelectionEnabled = true;
+
+        // Set here rather than in XAML: the Uno TextBlock fallback has no Background, and the UWP compiler rejects win:Background
+        Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0, 255, 255, 255));
     }
     #else
     //// Polyfill dummy for event callback
