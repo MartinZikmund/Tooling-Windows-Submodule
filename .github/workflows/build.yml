@@ -96,11 +96,6 @@ jobs:
       - name: Enable git long paths
         run: git config --system core.longpaths true
 
-      # Uno's wasm runtime package deploys files under wwwroot/package_<hash>/, which goes past MAX_PATH here
-      - name: Enable Windows long paths
-        shell: pwsh
-        run: Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -157,9 +152,13 @@ jobs:
         run: ${{ github.workspace }}/${{ env.HEADS_DIRECTORY }}/GenerateSingleSampleHeads.ps1 -componentPath ${{ github.workspace }}/${{ env.PROJECT_DIRECTORY }}${{ env.ENABLE_DIAGNOSTICS == 'true' && ' -UseDiagnostics' || '' }}
 
       # Build and use template for creating new experiments
+      # Built from a drive letter mapped to the workspace: Uno's wasm runtime deploys files under
+      # wwwroot/package_<hash>/ that go past MAX_PATH from the runner's long workspace path
       - name: Build ProjectTemplate
-        working-directory: ./${{ env.PROJECT_DIRECTORY }}
-        run: msbuild.exe ProjectTemplate.sln /restore /nowarn:MSB4011 -p:Configuration=Debug
+        run: |
+          subst W: "${{ github.workspace }}"
+          Set-Location "W:\${{ env.PROJECT_DIRECTORY }}"
+          msbuild.exe ProjectTemplate.sln /restore /nowarn:MSB4011 -p:Configuration=Debug
 
   # Test job to build a single experiment to ensure our changes work for both our main types of solutions at the moment
   new-experiment:
@@ -202,11 +201,6 @@ jobs:
 
       - name: Enable git long paths
         run: git config --system core.longpaths true
-
-      # Uno's wasm runtime package deploys files under wwwroot/package_<hash>/, which goes past MAX_PATH here
-      - name: Enable Windows long paths
-        shell: pwsh
-        run: Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Repository
@@ -293,9 +287,13 @@ jobs:
       # (GenerateSingleSolution.ps1 swaps in the Uno.Sdk head instead of the classic Wasm one for
       # WinUI 3 + wasm), so one MSBuild invocation covers the Uno.Sdk head too - msbuild.exe builds
       # it fine, verified locally against dotnet build with identical results.
+      # Built from a drive letter mapped to the workspace: Uno's wasm runtime deploys files under
+      # wwwroot/package_<hash>/ that go past MAX_PATH from the runner's long workspace path
       - name: MSBuild
-        working-directory: ./${{ env.TEST_PROJECT_DIRECTORY }}
-        run: msbuild.exe ${{ env.TEST_PROJECT_NAME }}.sln /restore /nowarn:MSB4011 -p:Configuration=Release /m ${{ env.ENABLE_DIAGNOSTICS == 'true' && '/bl' || '' }} /v:${{ env.MSBUILD_VERBOSITY }}
+        run: |
+          subst W: "${{ github.workspace }}"
+          Set-Location "W:\${{ env.TEST_PROJECT_DIRECTORY }}"
+          msbuild.exe ${{ env.TEST_PROJECT_NAME }}.sln /restore /nowarn:MSB4011 -p:Configuration=Release /m ${{ env.ENABLE_DIAGNOSTICS == 'true' && '/bl' || '' }} /v:${{ env.MSBUILD_VERBOSITY }}
 
       # Run tests
       - name: Setup VSTest Path
