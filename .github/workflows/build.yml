@@ -96,6 +96,11 @@ jobs:
       - name: Enable git long paths
         run: git config --system core.longpaths true
 
+      # Uno's wasm runtime package deploys files under wwwroot/package_<hash>/, which goes past MAX_PATH here
+      - name: Enable Windows long paths
+        shell: pwsh
+        run: Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -123,6 +128,26 @@ jobs:
         run: |
           copy ./tooling/.github/workflows/config/* ./
           copy ./tooling/global.json ./
+
+      # The ProjectTemplate solution includes the Uno.Sdk head, see TOOLKIT_COMPONENTS_REF
+      - name: Checkout Toolkit components the gallery depends on
+        uses: actions/checkout@v4
+        with:
+          repository: CommunityToolkit/Windows
+          ref: ${{ env.TOOLKIT_COMPONENTS_REF }}
+          path: windows
+          sparse-checkout: |
+            components/Converters
+            components/Extensions
+            components/Helpers
+            components/SettingsControls
+            components/Triggers
+
+      - name: Copy Toolkit components next to the template
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force ./components | Out-Null
+          Move-Item ./windows/components/* ./components/
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -177,6 +202,11 @@ jobs:
 
       - name: Enable git long paths
         run: git config --system core.longpaths true
+
+      # Uno's wasm runtime package deploys files under wwwroot/package_<hash>/, which goes past MAX_PATH here
+      - name: Enable Windows long paths
+        shell: pwsh
+        run: Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Repository
