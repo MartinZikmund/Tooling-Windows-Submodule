@@ -4,6 +4,7 @@
 
 using Android.App;
 using Android.Runtime;
+using Uno.UI.Hosting;
 
 namespace CommunityToolkit.App.Uno;
 
@@ -14,10 +15,16 @@ namespace CommunityToolkit.App.Uno;
     HardwareAccelerated = true,
     Theme = "@style/AppTheme"
 )]
-public class Application : Microsoft.UI.Xaml.NativeApplication
+public class Application : global::Uno.UI.Runtime.Android.NativeApplication
 {
     public Application(IntPtr javaReference, JniHandleOwnership transfer)
-        : base(() => new CommunityToolkit.App.Shared.App(), javaReference, transfer)
+        : base(javaReference, transfer)
     {
     }
+
+    protected override UnoPlatformHost CreateHost() =>
+        UnoPlatformHostBuilder.Create()
+            .App(() => new CommunityToolkit.App.Shared.App())
+            .UseAndroid()
+            .Build();
 }
