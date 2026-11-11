@@ -199,6 +199,11 @@ function Invoke-MSBuildWithBinlog {
   else {
     msbuild $msbuildArgs $TargetHeadPath
   }
+
+  # A later successful build would otherwise overwrite $LASTEXITCODE and hide this failure.
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
 }
 
 # The Uno.Sdk head covers several MultiTargets from one multi-TFM csproj (see
