@@ -29,13 +29,16 @@ function CreateVsCodeLaunchConfigJson {
   }";
 }
 
+# The Uno head can target several frameworks at once, and dotnet run needs exactly one.
 function CreateUnoVsCodeLaunchConfigJson {
   param (
-    [string]$projectName
+    [string]$projectName,
+    [string]$platformName,
+    [string]$targetFramework
   )
 
   return "{
-    `"name`": `"$projectName (Uno)`",
+    `"name`": `"$projectName (Uno $platformName)`",
     `"type`": `"coreclr`",
     `"request`": `"launch`",
     `"program`": `"dotnet`",
@@ -46,6 +49,7 @@ function CreateUnoVsCodeLaunchConfigJson {
       `"/p:UnoSourceGeneratorUseGenerationHost=true`",
       `"/p:UnoSourceGeneratorUseGenerationController=false`",
       `"/p:UnoRemoteControlPort=443`",
+      `"--framework=$targetFramework`",
       `"--project=`$`{workspaceFolder`}/components/$projectName/heads/Uno/$projectName.Uno.csproj`"
     ],
     `"presentation`": {
@@ -74,9 +78,11 @@ foreach ($projectPath in Get-ChildItem -Directory -Depth 0 -Path "$PSScriptRoot/
   $config = $configJson | ConvertFrom-Json;
   $launchConfig.configurations += $config;
 
-  $unoConfigJson = CreateUnoVsCodeLaunchConfigJson $projectName;
-  $unoConfig = $unoConfigJson | ConvertFrom-Json;
-  $launchConfig.configurations += $unoConfig;
+  foreach ($unoTarget in @(@('Desktop', 'net10.0-desktop'), @('WebAssembly', 'net10.0-browserwasm'))) {
+    $unoConfigJson = CreateUnoVsCodeLaunchConfigJson $projectName $unoTarget[0] $unoTarget[1];
+    $unoConfig = $unoConfigJson | ConvertFrom-Json;
+    $launchConfig.configurations += $unoConfig;
+  }
 }
 
 if ($allowGitChanges.IsPresent) {
