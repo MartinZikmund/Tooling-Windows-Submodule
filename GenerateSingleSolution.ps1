@@ -192,10 +192,11 @@ Write-Output "Generating solution for $componentName in $generatedSolutionFilePa
 $unoSdkHeadMultiTargets = @('win32', 'linux', 'macos', 'ios', 'android')
 
 # The Uno.Sdk head is implied by the requested MultiTargets, not a separate switch: it's the only
-# head that can serve win32/linux/macos/ios/android, and for wasm it replaces the classic Wasm head
-# once WinUI 3 is requested (WinUI 2 + wasm keeps using the classic head).
-$includeUnoSdkHead = (($MultiTargets | Where-Object { $unoSdkHeadMultiTargets -contains $_ }).Count -gt 0) -or `
-    ($MultiTargets.Contains('wasm') -and $WinUIMajorVersion -eq 3)
+# head that can serve win32/linux/macos/ios/android, and for wasm it replaces the classic Wasm head.
+# It runs on Uno 7 (Uno.WinUI), so WinUI 2 gets no Uno.Sdk head and keeps the classic Wasm head.
+$includeUnoSdkHead = $WinUIMajorVersion -ne 2 -and (
+    (($MultiTargets | Where-Object { $unoSdkHeadMultiTargets -contains $_ }).Count -gt 0) -or
+    $MultiTargets.Contains('wasm'))
 
 foreach ($multitarget in $MultiTargets) {
     if ($unoSdkHeadMultiTargets -contains $multitarget) {
