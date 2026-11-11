@@ -78,6 +78,7 @@
   <!-- Shared app code -->
   <Import Project="$(ToolingDirectory)\CommunityToolkit.App.Shared\CommunityToolkit.App.Shared.projitems" Label="Shared" />
   <Import Project="$(ToolingDirectory)\ProjectHeads\Targets\AddMultiTargetCompatibleSampleDocs.targets" />
+  <Import Project="$(ToolingDirectory)\ProjectHeads\App.Head.Uno.AssemblyAttributes.props" />
 
   <!-- Head dependencies (from App.Head.props) -->
   <ItemGroup>

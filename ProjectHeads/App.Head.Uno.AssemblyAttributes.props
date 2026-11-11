@@ -1,0 +1,18 @@
+<!-- Assembly metadata the gallery reads at runtime. The Uno.Sdk heads keep the SDK's AssemblyInfo
+     generation, so this feeds it items instead of App.Head.props' AddAssemblyAttributes target. -->
+<Project>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(SourceRevisionId)' != ''">
+      <_Parameter1>CommitHash</_Parameter1>
+      <_Parameter2>$(SourceRevisionId)</_Parameter2>
+    </AssemblyAttribute>
+    <!-- Read by ToolkitDocumentationRenderer for its Source code / Package info panel -->
+    <AssemblyAttribute Include="CommunityToolkit.Attributes.PackageProjectUrlAttribute" Condition="'$(PackageProjectUrl)' != ''">
+      <_Parameter1>$(PackageProjectUrl)</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="WarnMissingPackageProjectUrl" BeforeTargets="BeforeCompile" Condition="'$(PackageProjectUrl)' == ''">
+    <Warning Text="The PackageProjectUrl property was not set." />
+  </Target>
+</Project>
